@@ -80,7 +80,7 @@ extension Trip {
                 "Sand Hollow — Championship", "Black Desert Resort",
                 "Wolf Creek", "Coral Canyon", "Green Spring"
             ],
-            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek", "Mike"],
+            attendeeNicknames: ["Roach", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek", "Mike"],
             lodgingLabel: "VRBO",
             lodgingAddress: "5173 W 2150 S, Hurricane, UT 84737"
         ),

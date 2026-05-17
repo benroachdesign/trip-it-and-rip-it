@@ -39,9 +39,9 @@ enum MockAwards {
             year: 2025,
             title: "Champions",
             category: .championship,
-            recipientLabel: "Trippers",
+            recipientLabel: "Rippers",
             recipientNicknames: ["Roach", "Tommer", "Braden", "Derek"],
-            description: nil,
+            description: "Final: Rippers 19.5, Trippers 10",
             isTeamAward: true
         ),
         Award(
