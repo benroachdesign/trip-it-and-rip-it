@@ -55,7 +55,6 @@ struct RosterView: View {
             members = try await SupabaseService.client
                 .from("members")
                 .select("id, full_name, nickname, sort_order, is_guest")
-                .eq("is_guest", value: false)
                 .order("sort_order")
                 .execute()
                 .value
@@ -89,12 +88,12 @@ extension Member {
         Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false),
         Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false),
         Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false),
-        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 70,  isGuest: false),
-        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 80,  isGuest: false),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 90,  isGuest: false),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 100, isGuest: false),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false),
+        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true),
+        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true),
         Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true)
     ]
 
-    static let mockRoster: [Member] = allMockMembers.filter { !$0.isGuest }
+    static let mockRoster: [Member] = allMockMembers
 }
