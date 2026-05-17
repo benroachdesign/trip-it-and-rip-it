@@ -96,11 +96,11 @@ extension Member {
         Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 10, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        handicap: 9,  funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       handicap: 12, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", handicap: nil, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Houston",       handicap: nil, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", handicap: 13, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Houston",       handicap: 13, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false, homeCity: nil,             handicap: 11, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false, homeCity: nil,             handicap: 4,  funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: nil,             handicap: nil, funFact: nil, bio: nil)
+        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: nil,             handicap: 7,  funFact: nil, bio: nil)
     ]
 
     static let mockRoster: [Member] = allMockMembers
