@@ -185,12 +185,7 @@ private struct AttendeeAvatar: View {
     var body: some View {
         VStack(spacing: Spacing.xs) {
             ZStack(alignment: .topTrailing) {
-                Text(member.nickname?.prefix(1).uppercased() ?? "?")
-                    .font(AppFont.display(22, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
-                    .background(Color.appAccent)
-                    .clipShape(Circle())
+                MemberAvatar(member: member, size: 56)
                 if member.isOg {
                     Text("OG")
                         .font(AppFont.body(9, weight: .bold))

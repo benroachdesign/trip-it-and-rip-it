@@ -20,12 +20,7 @@ struct MemberProfileView: View {
 
     private var hero: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
-            Text(member.nickname ?? String(member.fullName.prefix(1)))
-                .font(AppFont.display(56, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 120, height: 120)
-                .background(Color.appAccent)
-                .clipShape(Circle())
+            MemberAvatar(member: member, size: 120)
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: Spacing.sm) {

@@ -14,12 +14,7 @@ struct MemberRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: Spacing.md) {
-            Text(member.nickname ?? String(member.fullName.prefix(1)))
-                .font(AppFont.display(20, weight: .semibold))
-                .foregroundStyle(Color.appAccent)
-                .frame(width: 44, height: 44)
-                .background(Color.appSurface)
-                .clipShape(Circle())
+            MemberAvatar(member: member, size: 44)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 4) {
