@@ -42,7 +42,7 @@ struct RosterView: View {
         do {
             members = try await SupabaseService.client
                 .from("members")
-                .select("id, full_name, nickname, sort_order, is_guest, is_og, home_city, fun_fact, bio")
+                .select("id, full_name, nickname, sort_order, is_guest, is_og, home_city, handicap, fun_fact, bio")
                 .order("sort_order")
                 .execute()
                 .value
@@ -60,6 +60,7 @@ struct Member: Identifiable, Decodable, Hashable {
     let isGuest: Bool
     let isOg: Bool
     let homeCity: String?
+    let handicap: Double?
     let funFact: String?
     let bio: String?
 
@@ -71,24 +72,35 @@ struct Member: Identifiable, Decodable, Hashable {
         case isGuest = "is_guest"
         case isOg = "is_og"
         case homeCity = "home_city"
+        case handicap
         case funFact = "fun_fact"
         case bio
     }
 }
 
 extension Member {
+    var handicapDisplay: String? {
+        guard let handicap else { return nil }
+        if handicap.truncatingRemainder(dividingBy: 1) == 0 {
+            return "HCP \(Int(handicap))"
+        }
+        return "HCP \(String(format: "%.1f", handicap))"
+    }
+}
+
+extension Member {
     static let allMockMembers: [Member] = [
-        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true,  homeCity: "Chicago",       funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true,  homeCity: "Portland",      funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false, isOg: true,  homeCity: "Dallas",        funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Houston",       funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil)
+        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 11, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true,  homeCity: "Portland",      handicap: 12, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false, isOg: true,  homeCity: "Dallas",        handicap: 18, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 10, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        handicap: 9,  funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       handicap: 12, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", handicap: nil, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Houston",       handicap: nil, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false, homeCity: nil,             handicap: 11, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false, homeCity: nil,             handicap: 4,  funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: nil,             handicap: nil, funFact: nil, bio: nil)
     ]
 
     static let mockRoster: [Member] = allMockMembers

@@ -55,6 +55,9 @@ struct MemberProfileView: View {
     private var statsRow: some View {
         HStack(spacing: Spacing.lg) {
             stat(label: "Trips", value: String(member.tripsAttendedCount))
+            if let hcp = member.handicapDisplay {
+                stat(label: "Handicap", value: hcp.replacingOccurrences(of: "HCP ", with: ""))
+            }
             if member.isOg {
                 stat(label: "Status", value: "Founding")
             }

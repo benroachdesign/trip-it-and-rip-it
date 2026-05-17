@@ -6,6 +6,7 @@ struct MemberRow: View {
     private var metadataPieces: [String] {
         var pieces: [String] = []
         if let city = member.homeCity { pieces.append(city) }
+        if let hcp = member.handicapDisplay { pieces.append(hcp) }
         let trips = member.tripsAttendedCount
         if trips > 0 { pieces.append("\(trips) trip\(trips == 1 ? "" : "s")") }
         return pieces
