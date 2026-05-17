@@ -23,14 +23,15 @@ Naming convention: `YYYYMMDDHHMMSS_description.sql`. Files are applied in lexica
 External setup (you do):
 
 - [x] **Supabase project** created (`darpwkdjywalibuvqwzv`), GitHub repo connected with auto-deploy enabled.
-- [ ] **First push to `main`** — applies the three initial migrations (schema, RLS, seed data) to production.
+- [x] **First push to `main`** — three initial migrations applied successfully. RLS confirmed enforcing the allowlist.
 - [ ] **Storage buckets:** in Supabase dashboard, create public buckets `course-photos` and `avatars`.
 - [ ] **Xcode project:** create a new iOS App in `ios/`. Interface: SwiftUI. Bundle ID: `com.benroach.tripitripit`. Deployment target: iOS 17.0.
-- [ ] **Apple Sign In capability:** in Xcode, Signing & Capabilities, add "Sign in with Apple".
-- [ ] **Google OAuth:** Google Cloud Console → create iOS OAuth client ID for the bundle ID. Save the client ID + reversed client ID.
-- [ ] **Supabase Auth providers:** dashboard → Auth → Providers → enable Apple + Google, paste credentials.
-- [ ] **Allowed emails:** populate `allowed_emails` table with Google/iCloud addresses of all 10 members (rolling).
-- [ ] **Privacy policy hosting:** push `web/privacy.html` as `index.html` to a public repo, enable GitHub Pages. The Pages URL goes in App Store Connect.
+- [x] **Apple Sign In capability** added in Xcode (Signing & Capabilities).
+- [ ] **Supabase Apple provider:** dashboard → Auth → Providers → Apple → enable, set Client IDs to `com.benroach.tripitripit`.
+- [ ] **Allowed emails:** populate `allowed_emails` table with the Apple-ID emails of all 10 members (rolling).
+
+> Auth approach: **Sign in with Apple only.** Google was cut on 2026-05-17 — every user is on iPhone, so Google is redundant and Sign in with Apple is the strongest signal to App Review.
+- [x] **Privacy policy hosting:** live at https://benroachdesign.github.io/trip-it-and-rip-it-privacy/ (repo: `benroachdesign/trip-it-and-rip-it-privacy`).
 
 Already produced:
 
