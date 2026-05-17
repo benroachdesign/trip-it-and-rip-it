@@ -13,7 +13,7 @@ struct AuthGateView: View {
         case .notAllowed(let email):
             NotAllowedView(email: email)
         case .signedIn:
-            SignedInView()
+            RootTabView()
         }
     }
 }
