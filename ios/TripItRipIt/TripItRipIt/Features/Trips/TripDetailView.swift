@@ -11,11 +11,18 @@ struct TripDetailView: View {
         Trip.mockDetail(for: trip.id)
     }
 
+    private var scheduleEvents: [TripEvent] {
+        MockTripEvents.events(forYear: trip.year)
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.xl) {
                 heroSection
                 attendeesSection
+                if !scheduleEvents.isEmpty {
+                    scheduleSection
+                }
                 coursesSection
                 lodgingSection
             }
@@ -107,6 +114,23 @@ struct TripDetailView: View {
         }
     }
 
+    private var scheduleSection: some View {
+        let groups = Dictionary(grouping: scheduleEvents, by: { $0.date })
+        let days = groups.keys.sorted()
+        return VStack(alignment: .leading, spacing: Spacing.md) {
+            SectionLabel(text: "Schedule")
+            VStack(spacing: Spacing.lg) {
+                ForEach(days, id: \.self) { day in
+                    DaySchedule(
+                        day: day,
+                        events: (groups[day] ?? []).sorted { $0.sortableMinute < $1.sortableMinute }
+                    )
+                }
+            }
+            .padding(.horizontal, Spacing.lg)
+        }
+    }
+
     @ViewBuilder
     private var lodgingSection: some View {
         if let detail, let address = detail.lodgingAddress {
@@ -186,6 +210,92 @@ private struct AttendeeAvatar: View {
                 .foregroundStyle(Color.appInk)
         }
         .frame(width: 72)
+    }
+}
+
+private struct DaySchedule: View {
+    let day: Date
+    let events: [TripEvent]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Text(dayHeaderText)
+                .font(AppFont.body(12, weight: .semibold))
+                .tracking(1.5)
+                .foregroundStyle(Color.appAccent)
+            VStack(spacing: 1) {
+                ForEach(events) { event in
+                    EventRow(event: event)
+                }
+            }
+            .background(Color.appSurface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+            .overlay(
+                RoundedRectangle(cornerRadius: Radius.lg)
+                    .stroke(Color.appDivider, lineWidth: 1)
+            )
+        }
+    }
+
+    private var dayHeaderText: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE · MMM d"
+        return formatter.string(from: day).uppercased()
+    }
+}
+
+private struct EventRow: View {
+    let event: TripEvent
+
+    var body: some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            VStack(alignment: .trailing, spacing: 0) {
+                Text(event.timeText ?? "—")
+                    .font(AppFont.numeric(13, weight: .semibold))
+                    .foregroundStyle(Color.appInk)
+                    .multilineTextAlignment(.trailing)
+            }
+            .frame(width: 96, alignment: .trailing)
+
+            Image(systemName: iconName)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(iconColor)
+                .frame(width: 16, alignment: .center)
+                .padding(.top, 4)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(event.title)
+                    .font(AppFont.body(15, weight: .semibold))
+                    .foregroundStyle(Color.appInk)
+                if let subtitle = event.subtitle {
+                    Text(subtitle)
+                        .font(AppFont.footnote)
+                        .foregroundStyle(Color.appMuted)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.md)
+        .background(Color.appSurface)
+    }
+
+    private var iconName: String {
+        switch event.eventType {
+        case .golf:      return "flag.fill"
+        case .meal:      return "fork.knife"
+        case .transport: return "airplane"
+        case .other:     return "circle.fill"
+        }
+    }
+
+    private var iconColor: Color {
+        switch event.eventType {
+        case .golf:      return Color.appAccent
+        case .meal:      return Color.appMuted
+        case .transport: return Color.appMuted
+        case .other:     return Color.appMuted
+        }
     }
 }
 
