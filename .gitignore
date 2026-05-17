@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+._*
+
+# Claude Code local state
+.claude/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.p8
+GoogleService-Info.plist
+
+# Xcode
+ios/**/xcuserdata/
+ios/**/*.xcuserstate
+ios/**/DerivedData/
+ios/**/build/
+ios/**/.build/
+ios/**/.swiftpm/
+ios/Pods/
+
+# Supabase CLI (local-only state)
+supabase/.branches/
+supabase/.temp/
