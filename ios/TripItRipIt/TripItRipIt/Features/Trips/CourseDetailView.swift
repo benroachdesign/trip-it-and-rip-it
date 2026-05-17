@@ -29,6 +29,25 @@ struct CourseDetailView: View {
 
     private var heroSection: some View {
         ZStack {
+            if let urlString = course.heroPhotoUrl, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                    default:
+                        placeholderHero
+                    }
+                }
+            } else {
+                placeholderHero
+            }
+        }
+        .frame(height: 220)
+        .clipped()
+    }
+
+    private var placeholderHero: some View {
+        ZStack {
             LinearGradient(
                 colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
@@ -37,8 +56,6 @@ struct CourseDetailView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(.white.opacity(0.18))
         }
-        .frame(height: 220)
-        .clipped()
     }
 
     private var metaSection: some View {

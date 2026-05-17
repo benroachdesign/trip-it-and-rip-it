@@ -168,6 +168,19 @@ extension Trip {
         }
     }
 
+    /// Resolves a hero photo URL for the year card: prefers the featured course's photo,
+    /// falls back to the first photo found among the year's other courses.
+    static func mockFeaturedCoursePhoto(for tripId: UUID) -> String? {
+        guard let detail = mockDetail(for: tripId) else { return nil }
+        if let featured = Course.find(byName: detail.featuredCourseName),
+           let photo = featured.heroPhotoUrl {
+            return photo
+        }
+        return detail.courseNames
+            .compactMap { Course.find(byName: $0)?.heroPhotoUrl }
+            .first
+    }
+
     private static func dateFrom(_ string: String) -> Date {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]

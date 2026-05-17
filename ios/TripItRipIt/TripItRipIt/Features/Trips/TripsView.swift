@@ -23,6 +23,7 @@ struct TripsView: View {
                                 TripYearCard(
                                     trip: trip,
                                     featuredCourseName: Trip.mockFeaturedCourse(for: trip.id),
+                                    featuredCoursePhotoUrl: Trip.mockFeaturedCoursePhoto(for: trip.id),
                                     courseNames: Trip.mockCourseNames(for: trip.id)
                                 )
                             }
@@ -68,7 +69,12 @@ struct TripsView: View {
 private struct TripYearCard: View {
     let trip: Trip
     let featuredCourseName: String?
+    let featuredCoursePhotoUrl: String?
     let courseNames: [String]
+
+    private var resolvedHeroUrl: String? {
+        trip.heroPhotoUrl ?? featuredCoursePhotoUrl
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -106,7 +112,7 @@ private struct TripYearCard: View {
 
     @ViewBuilder
     private var heroImage: some View {
-        if let urlString = trip.heroPhotoUrl, let url = URL(string: urlString) {
+        if let urlString = resolvedHeroUrl, let url = URL(string: urlString) {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):

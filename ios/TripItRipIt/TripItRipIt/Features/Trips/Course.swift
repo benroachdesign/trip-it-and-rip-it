@@ -48,13 +48,16 @@ extension Course {
         mock("Wolf Creek Golf Club",             "Mesquite",    "NV", "Dennis Rider", 2000),
         mock("Coral Canyon",                     "Washington",  "UT", "Keith Foster", 2001),
         mock("Black Desert Resort",              "Ivins",       "UT", "Tom Weiskopf", 2023),
-        mock("Bandon Preserve",                  "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2012),
+        mock("Bandon Preserve",                  "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2012,
+             photo: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Bandon_Preserve.jpg"),
         mock("Pacific Dunes",                    "Bandon",      "OR", "Tom Doak", 2001),
         mock("Shorty's",                         "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2020),
-        mock("Bandon Dunes",                     "Bandon",      "OR", "David McLay Kidd", 1999),
+        mock("Bandon Dunes",                     "Bandon",      "OR", "David McLay Kidd", 1999,
+             photo: "https://upload.wikimedia.org/wikipedia/commons/2/29/Bandon_Dunes_-_4th_hole.jpg"),
         mock("Old Macdonald",                    "Bandon",      "OR", "Tom Doak & Jim Urbina", 2010),
         mock("Sheep Ranch",                      "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2020),
-        mock("Bandon Trails",                    "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2005)
+        mock("Bandon Trails",                    "Bandon",      "OR", "Bill Coore & Ben Crenshaw", 2005,
+             photo: "https://upload.wikimedia.org/wikipedia/commons/4/48/Bandon_Trails_approaching_the_18th_fairway.jpg")
     ]
 
     static func find(byName name: String) -> Course? {
@@ -66,7 +69,8 @@ extension Course {
         _ city: String,
         _ state: String,
         _ architect: String?,
-        _ yearBuilt: Int?
+        _ yearBuilt: Int?,
+        photo: String? = nil
     ) -> Course {
         Course(
             id: UUID(),
@@ -75,7 +79,7 @@ extension Course {
             locationState: state,
             architect: architect,
             yearBuilt: yearBuilt,
-            heroPhotoUrl: nil
+            heroPhotoUrl: photo
         )
     }
 }
