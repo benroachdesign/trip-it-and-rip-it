@@ -54,7 +54,8 @@ struct RosterView: View {
         do {
             members = try await SupabaseService.client
                 .from("members")
-                .select("id, full_name, nickname, sort_order")
+                .select("id, full_name, nickname, sort_order, is_guest")
+                .eq("is_guest", value: false)
                 .order("sort_order")
                 .execute()
                 .value
@@ -64,31 +65,36 @@ struct RosterView: View {
     }
 }
 
-struct Member: Identifiable, Decodable {
+struct Member: Identifiable, Decodable, Hashable {
     let id: UUID
     let fullName: String
     let nickname: String?
     let sortOrder: Int
+    let isGuest: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
         case fullName = "full_name"
         case nickname
         case sortOrder = "sort_order"
+        case isGuest = "is_guest"
     }
 }
 
 extension Member {
-    static let mockRoster: [Member] = [
-        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10),
-        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20),
-        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30),
-        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40),
-        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50),
-        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60),
-        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 70),
-        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 80),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 90),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 100)
+    static let allMockMembers: [Member] = [
+        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false),
+        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false),
+        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false),
+        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false),
+        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false),
+        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false),
+        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 70,  isGuest: false),
+        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 80,  isGuest: false),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 90,  isGuest: false),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 100, isGuest: false),
+        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true)
     ]
+
+    static let mockRoster: [Member] = allMockMembers.filter { !$0.isGuest }
 }
