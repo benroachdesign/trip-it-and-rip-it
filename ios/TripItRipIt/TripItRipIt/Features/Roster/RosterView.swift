@@ -17,33 +17,10 @@ struct RosterView: View {
                 ProgressView().controlSize(.large)
             } else {
                 List(members) { member in
-                    HStack(spacing: Spacing.md) {
-                        Text(member.nickname ?? String(member.fullName.prefix(1)))
-                            .font(AppFont.display(20, weight: .semibold))
-                            .foregroundStyle(Color.appAccent)
-                            .frame(width: 44, height: 44)
-                            .background(Color.appSurface)
-                            .clipShape(Circle())
-                        VStack(alignment: .leading, spacing: 2) {
-                            HStack(spacing: Spacing.sm) {
-                                Text(member.fullName)
-                                    .font(AppFont.headline)
-                                    .foregroundStyle(Color.appInk)
-                                if member.isOg {
-                                    MemberBadge(label: "OG", tint: .appAccent)
-                                }
-                                if member.isGuest {
-                                    MemberBadge(label: "GUEST", tint: .appMuted)
-                                }
-                            }
-                            if let nickname = member.nickname {
-                                Text(nickname)
-                                    .font(AppFont.footnote)
-                                    .foregroundStyle(Color.appMuted)
-                            }
-                        }
+                    NavigationLink(value: member) {
+                        MemberRow(member: member)
                     }
-                    .padding(.vertical, Spacing.xs)
+                    .listRowInsets(EdgeInsets(top: Spacing.sm, leading: Spacing.lg, bottom: Spacing.sm, trailing: Spacing.lg))
                 }
                 .listStyle(.plain)
             }
@@ -51,6 +28,9 @@ struct RosterView: View {
         .background(Color.appBackground)
         .navigationTitle("Roster")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Member.self) { member in
+            MemberProfileView(member: member)
+        }
         .task { await load() }
     }
 
@@ -62,7 +42,7 @@ struct RosterView: View {
         do {
             members = try await SupabaseService.client
                 .from("members")
-                .select("id, full_name, nickname, sort_order, is_guest, is_og")
+                .select("id, full_name, nickname, sort_order, is_guest, is_og, home_city, fun_fact, bio")
                 .order("sort_order")
                 .execute()
                 .value
@@ -79,6 +59,9 @@ struct Member: Identifiable, Decodable, Hashable {
     let sortOrder: Int
     let isGuest: Bool
     let isOg: Bool
+    let homeCity: String?
+    let funFact: String?
+    let bio: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -87,23 +70,39 @@ struct Member: Identifiable, Decodable, Hashable {
         case sortOrder = "sort_order"
         case isGuest = "is_guest"
         case isOg = "is_og"
+        case homeCity = "home_city"
+        case funFact = "fun_fact"
+        case bio
     }
 }
 
 extension Member {
     static let allMockMembers: [Member] = [
-        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true),
-        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true),
-        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false, isOg: true),
-        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true),
-        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false),
-        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false),
-        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false),
-        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false),
-        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false)
+        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true,  homeCity: "Chicago",       funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true,  homeCity: "Portland",      funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false, isOg: true,  homeCity: "Dallas",        funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Houston",       funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: nil,             funFact: nil, bio: nil)
     ]
 
     static let mockRoster: [Member] = allMockMembers
+
+    var tripsAttendedCount: Int {
+        guard let nickname else { return 0 }
+        return Trip.mockDetails.filter { $0.attendeeNicknames.contains(nickname) }.count
+    }
+
+    var attendedTripYears: [Int] {
+        guard let nickname else { return [] }
+        return Trip.mockDetails
+            .filter { $0.attendeeNicknames.contains(nickname) }
+            .map { $0.trip.year }
+            .sorted()
+    }
 }
