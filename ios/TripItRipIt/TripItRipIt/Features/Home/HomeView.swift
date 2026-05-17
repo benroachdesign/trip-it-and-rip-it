@@ -75,6 +75,9 @@ struct HomeView: View {
         .navigationDestination(for: Trip.self) { trip in
             TripDetailView(trip: trip)
         }
+        .navigationDestination(for: Course.self) { course in
+            CourseDetailView(course: course)
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Sign out") { Task { await auth.signOut() } }

@@ -101,7 +101,14 @@ struct TripDetailView: View {
             SectionLabel(text: "Courses played")
             VStack(spacing: 1) {
                 ForEach(detail?.courseNames ?? [], id: \.self) { name in
-                    CourseRow(name: name)
+                    if let course = Course.find(byName: name) {
+                        NavigationLink(value: course) {
+                            CourseRow(name: name)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        CourseRow(name: name)
+                    }
                 }
             }
             .background(Color.appSurface)
