@@ -3,7 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AuthViewModel.self) private var auth
 
-    private let now = Date()
+    private let now = AppEnvironment.now
 
     private var greetingNickname: String {
         Member.allMockMembers.first(where: { $0.nickname == "Roach" })?.nickname ?? "friend"
@@ -170,22 +170,46 @@ struct HomeView: View {
     }
 
     private func duringSection(trip: Trip) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.md) {
-            Text("Right now")
-                .font(AppFont.sectionHeader)
-                .foregroundStyle(Color.homeInk)
-            Text("Next event and today's schedule will appear here during the trip.")
-                .font(AppFont.bodyText)
-                .foregroundStyle(Color.homeMuted)
+        let allEvents = MockTripEvents.events(forYear: trip.year)
+        let nextEvent = allEvents.first { $0.startsAt > now }
+        let remainingToday = allEvents.filter {
+            Calendar.current.isDate($0.date, inSameDayAs: now) && $0.startsAt > now
         }
-        .padding(Spacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.homeSurface)
-        .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: Radius.lg)
-                .stroke(Color.homeDivider, lineWidth: 1)
-        )
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
+        let nextDayEvents = allEvents.filter {
+            Calendar.current.isDate($0.date, inSameDayAs: tomorrow)
+        }
+
+        return VStack(alignment: .leading, spacing: Spacing.lg) {
+            dayBadge(trip: trip)
+            if let next = nextEvent {
+                NextUpHero(event: next, now: now)
+            }
+            if !remainingToday.isEmpty {
+                TodaySchedule(events: remainingToday, now: now)
+            }
+            if !nextDayEvents.isEmpty {
+                TomorrowPreview(events: nextDayEvents)
+            }
+        }
+    }
+
+    private func dayBadge(trip: Trip) -> some View {
+        let start = Calendar.current.startOfDay(for: trip.startDate ?? now)
+        let today = Calendar.current.startOfDay(for: now)
+        let dayNumber = (Calendar.current.dateComponents([.day], from: start, to: today).day ?? 0) + 1
+        let totalDays: Int = {
+            guard let startD = trip.startDate, let endD = trip.endDate else { return 0 }
+            return (Calendar.current.dateComponents([.day], from: startD, to: endD).day ?? 0) + 1
+        }()
+
+        return HStack {
+            Text("DAY \(max(1, dayNumber)) OF \(totalDays) · \(trip.locationCity.uppercased())")
+                .font(AppFont.body(11, weight: .semibold))
+                .tracking(2)
+                .foregroundStyle(Color.homeMuted)
+            Spacer()
+        }
     }
 
     private func wrappedSection(trip: Trip) -> some View {
@@ -220,4 +244,141 @@ private enum TripState {
     case upcoming(trip: Trip, daysUntil: Int)
     case during(trip: Trip)
     case wrapped(trip: Trip)
+}
+
+private struct NextUpHero: View {
+    let event: TripEvent
+    let now: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Text("NEXT UP IN \(countdownText)")
+                .font(AppFont.body(11, weight: .semibold))
+                .tracking(1.8)
+                .foregroundStyle(Color.homeAccent)
+            Text(event.title)
+                .font(AppFont.display(36, weight: .bold))
+                .foregroundStyle(Color.homeInk)
+                .lineLimit(2)
+            HStack(spacing: Spacing.sm) {
+                Image(systemName: iconName)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.homeMuted)
+                Text(headerLine)
+                    .font(AppFont.numeric(14, weight: .semibold))
+                    .foregroundStyle(Color.homeMuted)
+            }
+            if let subtitle = event.subtitle {
+                Text(subtitle)
+                    .font(AppFont.footnote)
+                    .foregroundStyle(Color.homeMuted)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.lg)
+        .background(Color.homeSurface)
+        .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+        .overlay(
+            RoundedRectangle(cornerRadius: Radius.lg)
+                .stroke(Color.homeAccent.opacity(0.4), lineWidth: 1)
+        )
+    }
+
+    private var countdownText: String {
+        let interval = event.startsAt.timeIntervalSince(now)
+        if interval < 60 { return "MINUTES" }
+        let hours = Int(interval) / 3600
+        let mins = (Int(interval) % 3600) / 60
+        if hours == 0 { return "\(mins)M" }
+        if mins == 0 { return "\(hours)H" }
+        return "\(hours)H \(mins)M"
+    }
+
+    private var headerLine: String {
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "EEEE"
+        let day = dayFormatter.string(from: event.date)
+        if let time = event.timeText {
+            return "\(time) · \(day)"
+        }
+        return day
+    }
+
+    private var iconName: String {
+        switch event.eventType {
+        case .golf: return "flag.fill"
+        case .meal: return "fork.knife"
+        case .transport: return "airplane"
+        case .other: return "circle.fill"
+        }
+    }
+}
+
+private struct TodaySchedule: View {
+    let events: [TripEvent]
+    let now: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("REST OF TODAY")
+                .font(AppFont.body(10, weight: .semibold))
+                .tracking(1.5)
+                .foregroundStyle(Color.homeMuted)
+            VStack(spacing: 1) {
+                ForEach(events) { event in
+                    SmallEventRow(event: event, now: now)
+                }
+            }
+            .background(Color.homeSurface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+        }
+    }
+}
+
+private struct TomorrowPreview: View {
+    let events: [TripEvent]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("TOMORROW")
+                .font(AppFont.body(10, weight: .semibold))
+                .tracking(1.5)
+                .foregroundStyle(Color.homeMuted)
+            VStack(spacing: 1) {
+                ForEach(events) { event in
+                    SmallEventRow(event: event, now: nil)
+                }
+            }
+            .background(Color.homeSurface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+        }
+    }
+}
+
+private struct SmallEventRow: View {
+    let event: TripEvent
+    let now: Date?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            Text(event.timeText ?? "—")
+                .font(AppFont.numeric(12, weight: .semibold))
+                .foregroundStyle(Color.homeMuted)
+                .frame(width: 96, alignment: .trailing)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(event.title)
+                    .font(AppFont.body(15, weight: .semibold))
+                    .foregroundStyle(Color.homeInk)
+                if let subtitle = event.subtitle {
+                    Text(subtitle)
+                        .font(AppFont.caption)
+                        .foregroundStyle(Color.homeMuted)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.sm)
+        .background(Color.homeSurface)
+    }
 }

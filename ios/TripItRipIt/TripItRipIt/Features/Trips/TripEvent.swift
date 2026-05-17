@@ -15,6 +15,11 @@ struct TripEvent: Identifiable, Hashable {
     let title: String
     let subtitle: String?
     let eventType: TripEventType
+
+    /// Wall-clock start of the event, derived from its day + minute-of-day.
+    var startsAt: Date {
+        Calendar.current.date(byAdding: .minute, value: sortableMinute, to: date) ?? date
+    }
 }
 
 enum MockTripEvents {
