@@ -19,17 +19,23 @@ struct TripsView: View {
                 ScrollView {
                     LazyVStack(spacing: Spacing.lg) {
                         ForEach(trips) { trip in
-                            TripYearCard(
-                                trip: trip,
-                                featuredCourseName: Trip.mockFeaturedCourse(for: trip.id),
-                                courseNames: Trip.mockCourseNames(for: trip.id)
-                            )
+                            NavigationLink(value: trip) {
+                                TripYearCard(
+                                    trip: trip,
+                                    featuredCourseName: Trip.mockFeaturedCourse(for: trip.id),
+                                    courseNames: Trip.mockCourseNames(for: trip.id)
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.horizontal, Spacing.lg)
                     .padding(.vertical, Spacing.md)
                 }
                 .background(Color.appBackground)
+                .navigationDestination(for: Trip.self) { trip in
+                    TripDetailView(trip: trip)
+                }
             }
         }
         .background(Color.appBackground)

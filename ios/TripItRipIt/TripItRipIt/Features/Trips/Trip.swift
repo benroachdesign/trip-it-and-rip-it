@@ -45,6 +45,9 @@ struct MockTripDetail {
     let trip: Trip
     let featuredCourseName: String
     let courseNames: [String]
+    let attendeeNicknames: [String]
+    let lodgingLabel: String?
+    let lodgingAddress: String?
 }
 
 extension Trip {
@@ -60,56 +63,71 @@ extension Trip {
             courseNames: [
                 "Pacific Dunes", "Bandon Dunes", "Old Macdonald",
                 "Sheep Ranch", "Bandon Trails", "Bandon Preserve", "Shorty's"
-            ]
+            ],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Bliz", "Kyle"],
+            lodgingLabel: "4 Lily Pond rooms at Bandon Dunes Resort",
+            lodgingAddress: "57744 Round Lake Drive, Bandon, OR 97411"
         ),
         MockTripDetail(
             trip: Trip(
                 id: UUID(), year: 2025, tripTitle: "Trip it & Rip it!",
                 locationCity: "St. George", locationState: "UT",
-                startDate: nil, endDate: nil,
+                startDate: dateFrom("2025-09-25"), endDate: dateFrom("2025-09-29"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
             featuredCourseName: "Sand Hollow — Championship",
             courseNames: [
                 "Sand Hollow — Championship", "Black Desert Resort",
                 "Wolf Creek", "Coral Canyon", "Green Spring"
-            ]
+            ],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek", "Mike"],
+            lodgingLabel: "VRBO",
+            lodgingAddress: "5173 W 2150 S, Hurricane, UT 84737"
         ),
         MockTripDetail(
             trip: Trip(
                 id: UUID(), year: 2024, tripTitle: "Annual Gentlemen's Golf Club",
                 locationCity: "Tucson", locationState: "AZ",
-                startDate: nil, endDate: nil,
+                startDate: dateFrom("2024-11-15"), endDate: dateFrom("2024-11-17"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
             featuredCourseName: "Ventana Canyon — Mountain",
             courseNames: [
                 "Ventana Canyon — Mountain", "Sewailo",
                 "Tucson National — Sonoran", "Tucson National — Catalina"
-            ]
+            ],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek"],
+            lodgingLabel: nil,
+            lodgingAddress: nil
         ),
         MockTripDetail(
             trip: Trip(
                 id: UUID(), year: 2023, tripTitle: "Annual Gentlemen's Golf Club",
                 locationCity: "San Diego", locationState: "CA",
-                startDate: nil, endDate: nil,
+                startDate: dateFrom("2023-11-02"), endDate: dateFrom("2023-11-06"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
             featuredCourseName: "Torrey Pines — South",
-            courseNames: ["Torrey Pines — South", "Maderas", "Aviara"]
+            courseNames: ["Torrey Pines — South", "Maderas", "Aviara"],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek"],
+            lodgingLabel: "Vintage Castle in the Sky",
+            lodgingAddress: "7390 Mar Avenue, La Jolla, CA 92037"
         ),
         MockTripDetail(
             trip: Trip(
                 id: UUID(), year: 2022, tripTitle: "Men's Golf Weekend",
                 locationCity: "Palm Desert", locationState: "CA",
-                startDate: nil, endDate: nil,
+                startDate: dateFrom("2022-12-08"), endDate: dateFrom("2022-12-12"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
             featuredCourseName: "PGA West — Mountain",
             courseNames: [
                 "PGA West — Mountain", "Desert Willow — Mountain View",
                 "Desert Springs — Palm", "SilverRock Resort"
-            ]
+            ],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden"],
+            lodgingLabel: "Rancho Mirage Private Oasis",
+            lodgingAddress: "71387 Sahara Road, Rancho Mirage, CA 92270"
         ),
         MockTripDetail(
             trip: Trip(
@@ -122,7 +140,10 @@ extension Trip {
             courseNames: [
                 "TPC Scottsdale — Stadium", "Troon North — Pinnacle",
                 "We-Ko-Pa — Saguaro", "We-Ko-Pa — Cholla"
-            ]
+            ],
+            attendeeNicknames: ["Roach", "Strub", "Mader", "Braden"],
+            lodgingLabel: "Airbnb",
+            lodgingAddress: "3331 N 63rd St, Scottsdale, AZ 85251"
         )
     ]
 
@@ -134,6 +155,17 @@ extension Trip {
 
     static func mockFeaturedCourse(for tripId: UUID) -> String? {
         mockDetails.first(where: { $0.trip.id == tripId })?.featuredCourseName
+    }
+
+    static func mockDetail(for tripId: UUID) -> MockTripDetail? {
+        mockDetails.first(where: { $0.trip.id == tripId })
+    }
+
+    static func mockAttendees(for tripId: UUID) -> [Member] {
+        let nicknames = mockDetail(for: tripId)?.attendeeNicknames ?? []
+        return nicknames.compactMap { nick in
+            Member.allMockMembers.first(where: { $0.nickname == nick })
+        }
     }
 
     private static func dateFrom(_ string: String) -> Date {
