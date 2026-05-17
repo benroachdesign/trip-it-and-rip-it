@@ -1,36 +1,27 @@
 import SwiftUI
 
 struct TrophiesView: View {
-    private var tournamentTrips: [Trip] {
-        Trip.mockTrips.filter { $0.year >= 2025 }
+    private var sortedTrips: [Trip] {
+        Trip.mockTrips.sorted { $0.year > $1.year }
     }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.xl) {
+            VStack(alignment: .leading, spacing: 0) {
                 hero
-                VStack(spacing: Spacing.lg) {
-                    ForEach(tournamentTrips) { trip in
-                        TrophyYearCard(trip: trip)
-                    }
+                ForEach(sortedTrips) { trip in
+                    YearShelf(trip: trip)
                 }
-                .padding(.horizontal, Spacing.lg)
             }
             .padding(.bottom, Spacing.xl)
         }
         .background(Color.appBackground)
         .navigationTitle("Trophies")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: Trip.self) { trip in
-            TripDetailView(trip: trip)
-        }
-        .navigationDestination(for: Course.self) { course in
-            CourseDetailView(course: course)
-        }
     }
 
     private var hero: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
+        VStack(alignment: .leading, spacing: Spacing.xs) {
             HStack(spacing: Spacing.sm) {
                 Image(systemName: "trophy.fill")
                     .font(.system(size: 22, weight: .semibold))
@@ -46,156 +37,159 @@ struct TrophiesView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Spacing.lg)
         .padding(.top, Spacing.md)
+        .padding(.bottom, Spacing.xl)
     }
 }
 
-private struct TrophyYearCard: View {
+private struct YearShelf: View {
     let trip: Trip
 
-    private var state: AwardYearState {
-        MockAwards.state(for: trip)
+    private var awards: [Award] {
+        MockAwards.awards(forYear: trip.year)
     }
 
     var body: some View {
-        NavigationLink(value: trip) {
-            VStack(alignment: .leading, spacing: Spacing.md) {
-                header
-                stateContent
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Spacing.lg)
-            .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.appDivider, lineWidth: 1)
-            )
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            header
+            content
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Spacing.lg)
+        .padding(.vertical, Spacing.lg)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.appDivider)
+                .frame(height: 1)
+        }
     }
 
     private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.md) {
             Text(String(trip.year))
                 .font(AppFont.display(48, weight: .bold))
                 .foregroundStyle(Color.appAccent)
                 .monospacedDigit()
-            VStack(alignment: .leading, spacing: 2) {
-                Text(trip.locationDisplay.uppercased())
-                    .font(AppFont.caption.weight(.semibold))
-                    .tracking(1.5)
-                    .foregroundStyle(Color.appMuted)
-                if let title = trip.tripTitle {
-                    Text(title)
-                        .font(AppFont.footnote)
-                        .foregroundStyle(Color.appMuted)
-                }
-            }
+            Text(trip.locationDisplay.uppercased())
+                .font(AppFont.caption.weight(.semibold))
+                .tracking(1.5)
+                .foregroundStyle(Color.appMuted)
             Spacer()
         }
     }
 
     @ViewBuilder
-    private var stateContent: some View {
-        switch state {
-        case .populated(let awards):
-            VStack(spacing: 1) {
+    private var content: some View {
+        if awards.isEmpty {
+            emptyState
+        } else {
+            VStack(spacing: Spacing.sm) {
                 ForEach(awards) { award in
-                    AwardRow(award: award)
+                    TrophyItem(award: award)
                 }
             }
-            .background(Color.appBackground)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+        }
+    }
+
+    private var emptyState: some View {
+        let state = MockAwards.state(for: trip)
+        return HStack(spacing: Spacing.sm) {
+            Image(systemName: emptyIcon(for: state))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.appMuted.opacity(0.6))
+            Text(emptyLabel(for: state))
+                .font(AppFont.footnote)
+                .foregroundStyle(Color.appMuted)
+            Spacer()
+        }
+        .padding(.top, Spacing.xs)
+    }
+
+    private func emptyIcon(for state: AwardYearState) -> String {
+        switch state {
+        case .future: return "hourglass"
+        case .pendingData: return "ellipsis.circle"
+        case .noTournament: return "circle.dashed"
+        case .populated: return "circle"
+        }
+    }
+
+    private func emptyLabel(for state: AwardYearState) -> String {
+        switch state {
+        case .future(let days):
+            return days.map { "\($0) days until trophies" } ?? "Trophies pending"
         case .pendingData:
-            EmptyStateLine(
-                icon: "hourglass",
-                label: "Awards being compiled",
-                detail: "Champions, low rounds, and the usual mishaps will be posted soon."
-            )
-        case .future(let daysUntilStart):
-            EmptyStateLine(
-                icon: "calendar",
-                label: daysUntilStart.map { "\($0) days until the trophies get fought for" } ?? "Trophies will be crowned this year",
-                detail: "Check back after the trip wraps."
-            )
+            return "Awards being compiled"
         case .noTournament:
-            EmptyStateLine(
-                icon: "circle.dashed",
-                label: "No tournament that year",
-                detail: nil
-            )
+            return "No awards recorded"
+        case .populated:
+            return ""
         }
     }
 }
 
-private struct AwardRow: View {
+private struct TrophyItem: View {
     let award: Award
 
     var body: some View {
         HStack(alignment: .top, spacing: Spacing.md) {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color.appAccent)
-                .frame(width: 22)
-                .padding(.top, 2)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(award.title)
-                    .font(AppFont.body(15, weight: .semibold))
-                    .foregroundStyle(Color.appInk)
+            iconView
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(award.title)
+                        .font(AppFont.body(16, weight: .semibold))
+                        .foregroundStyle(Color.appInk)
+                    if award.isTeamAward {
+                        Text("TEAM")
+                            .font(AppFont.body(9, weight: .bold))
+                            .tracking(0.6)
+                            .foregroundStyle(Color.appAccent)
+                            .padding(.horizontal, 5).padding(.vertical, 1.5)
+                            .background(Color.appAccent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                }
                 Text(award.recipientLabel)
-                    .font(AppFont.footnote)
-                    .foregroundStyle(Color.appMuted)
+                    .font(AppFont.footnote.weight(.medium))
+                    .foregroundStyle(Color.appInk)
+                if award.isTeamAward && !award.recipientNicknames.isEmpty {
+                    Text(award.recipientNicknames.joined(separator: " · "))
+                        .font(AppFont.caption)
+                        .foregroundStyle(Color.appMuted)
+                }
                 if let description = award.description {
                     Text(description)
                         .font(AppFont.caption)
                         .foregroundStyle(Color.appMuted)
-                        .padding(.top, 2)
                 }
             }
             Spacer(minLength: 0)
         }
-        .padding(Spacing.md)
-        .background(Color.appSurface)
+    }
+
+    private var iconView: some View {
+        Image(systemName: icon)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(iconColor)
+            .frame(width: 40, height: 40)
+            .background(iconColor.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private var icon: String {
         switch award.category {
         case .championship: return "trophy.fill"
         case .scoring:      return "target"
-        case .mishap:       return "exclamationmark.triangle.fill"
+        case .mishap:       return "exclamationmark.bubble.fill"
         case .behavior:     return "sparkles"
-        case .tradition:    return "flag.checkered.2.crossed"
+        case .tradition:    return "flag.checkered"
         case .other:        return "rosette"
         }
     }
-}
 
-private struct EmptyStateLine: View {
-    let icon: String
-    let label: String
-    let detail: String?
-
-    var body: some View {
-        HStack(alignment: .top, spacing: Spacing.md) {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color.appMuted)
-                .frame(width: 22)
-                .padding(.top, 2)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(label)
-                    .font(AppFont.body(15, weight: .semibold))
-                    .foregroundStyle(Color.appInk)
-                if let detail {
-                    Text(detail)
-                        .font(AppFont.footnote)
-                        .foregroundStyle(Color.appMuted)
-                }
-            }
-            Spacer(minLength: 0)
+    private var iconColor: Color {
+        switch award.category {
+        case .championship: return Color(red: 0.72, green: 0.55, blue: 0.18)  // brass/gold
+        default:            return Color.appAccent
         }
-        .padding(Spacing.md)
-        .background(Color.appBackground)
-        .clipShape(RoundedRectangle(cornerRadius: Radius.md))
     }
 }

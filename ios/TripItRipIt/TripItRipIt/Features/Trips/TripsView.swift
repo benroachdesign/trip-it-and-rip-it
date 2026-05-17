@@ -85,7 +85,7 @@ private struct TripYearCard: View {
     }
 
     private var heroSection: some View {
-        ZStack(alignment: .bottomTrailing) {
+        ZStack(alignment: .bottomLeading) {
             heroImage
             LinearGradient(
                 colors: [.clear, .black.opacity(0.55)],
@@ -152,7 +152,7 @@ private struct TripYearCard: View {
                 }
             }
             if !courseNames.isEmpty {
-                MarqueeText(text: courseNames.joined(separator: "  ·  "))
+                MarqueeText(text: courseNames.joined(separator: "  ·  ") + "   •  •  •  ")
                     .font(AppFont.caption)
                     .foregroundStyle(Color.appMuted)
                     .padding(.top, Spacing.xs)

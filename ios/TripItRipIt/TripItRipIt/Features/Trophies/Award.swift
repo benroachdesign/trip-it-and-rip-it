@@ -33,8 +33,36 @@ enum AwardCategory: String, CaseIterable {
 
 enum MockAwards {
     // Populate as the user supplies award data per year.
-    // 2025 will be filled in when Ben sends the St. George recap; 2026 after the trip.
-    static let all: [Award] = []
+    // 2026 fills in after the trip. Older years can have any award (not just championships).
+    static let all: [Award] = [
+        Award(
+            year: 2025,
+            title: "Champions",
+            category: .championship,
+            recipientLabel: "Trippers",
+            recipientNicknames: ["Roach", "Tommer", "Braden", "Derek"],
+            description: nil,
+            isTeamAward: true
+        ),
+        Award(
+            year: 2025,
+            title: "Most Lost Balls",
+            category: .mishap,
+            recipientLabel: "Mader",
+            recipientNicknames: ["Mader"],
+            description: nil,
+            isTeamAward: false
+        ),
+        Award(
+            year: 2023,
+            title: "Most SpongeBob Ice Pops",
+            category: .behavior,
+            recipientLabel: "Webb",
+            recipientNicknames: ["Webb"],
+            description: nil,
+            isTeamAward: false
+        )
+    ]
 
     static func awards(forYear year: Int) -> [Award] {
         all.filter { $0.year == year }

@@ -37,4 +37,12 @@ extension Color {
             ? UIColor(white: 1, alpha: 0.08)
             : UIColor(white: 0, alpha: 0.08)
     })
+
+    // Home-specific palette: a "putting green" feel — deep fairway behind the day-of UX.
+    static let homeBackground = Color(red: 0.067, green: 0.165, blue: 0.110)
+    static let homeSurface = Color.white.opacity(0.06)
+    static let homeInk = Color(red: 0.973, green: 0.961, blue: 0.933)
+    static let homeMuted = Color(red: 0.973, green: 0.961, blue: 0.933).opacity(0.65)
+    static let homeAccent = Color(red: 0.847, green: 0.776, blue: 0.553)  // warm brass
+    static let homeDivider = Color.white.opacity(0.10)
 }

@@ -50,26 +50,31 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.xl) {
-                greeting
-                Group {
-                    switch tripState {
-                    case .upcoming(let trip, let days):
-                        upcomingSection(trip: trip, days: days)
-                    case .during(let trip):
-                        duringSection(trip: trip)
-                    case .wrapped(let trip):
-                        wrappedSection(trip: trip)
-                    case .none:
-                        EmptyView()
+        ZStack {
+            Color.homeBackground.ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: Spacing.xl) {
+                    greeting
+                    Group {
+                        switch tripState {
+                        case .upcoming(let trip, let days):
+                            upcomingSection(trip: trip, days: days)
+                        case .during(let trip):
+                            duringSection(trip: trip)
+                        case .wrapped(let trip):
+                            wrappedSection(trip: trip)
+                        case .none:
+                            EmptyView()
+                        }
                     }
                 }
+                .padding(.horizontal, Spacing.lg)
+                .padding(.bottom, Spacing.xl)
             }
-            .padding(.horizontal, Spacing.lg)
-            .padding(.bottom, Spacing.xl)
         }
-        .background(Color.appBackground)
+        .toolbarBackground(Color.homeBackground, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .navigationTitle("Home")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Trip.self) { trip in
@@ -81,6 +86,7 @@ struct HomeView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Sign out") { Task { await auth.signOut() } }
+                    .foregroundStyle(Color.homeInk)
             }
         }
     }
@@ -89,10 +95,10 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Good \(timeOfDay)")
                 .font(AppFont.footnote)
-                .foregroundStyle(Color.appMuted)
+                .foregroundStyle(Color.homeMuted)
             Text(greetingNickname)
                 .font(AppFont.display(34, weight: .bold))
-                .foregroundStyle(Color.appInk)
+                .foregroundStyle(Color.homeInk)
         }
         .padding(.top, Spacing.lg)
     }
@@ -112,30 +118,30 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: -8) {
                     Text(String(days))
                         .font(AppFont.display(140, weight: .bold))
-                        .foregroundStyle(Color.appAccent)
+                        .foregroundStyle(Color.homeAccent)
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     Text("DAYS UNTIL \(trip.locationCity.uppercased())")
                         .font(AppFont.body(12, weight: .semibold))
                         .tracking(2)
-                        .foregroundStyle(Color.appMuted)
+                        .foregroundStyle(Color.homeMuted)
                 }
                 if let range = trip.dateRangeDisplay {
                     Text(range)
                         .font(AppFont.headline)
-                        .foregroundStyle(Color.appInk)
+                        .foregroundStyle(Color.homeInk)
                 }
-                Divider().background(Color.appDivider).padding(.vertical, Spacing.xs)
+                Divider().background(Color.homeDivider).padding(.vertical, Spacing.xs)
                 upcomingPreview(trip: trip)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Spacing.lg)
-            .background(Color.appSurface)
+            .background(Color.homeSurface)
             .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
             .overlay(
                 RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.appDivider, lineWidth: 1)
+                    .stroke(Color.homeDivider, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -143,21 +149,21 @@ struct HomeView: View {
 
     private func upcomingPreview(trip: Trip) -> some View {
         let events = MockTripEvents.events(forYear: trip.year).prefix(3)
-        return VStack(alignment: .leading, spacing: Spacing.sm) {
+        return VStack(alignment: .leading, spacing: Spacing.md) {
             Text("FIRST UP")
                 .font(AppFont.body(10, weight: .semibold))
                 .tracking(1.5)
-                .foregroundStyle(Color.appMuted)
-            ForEach(Array(events), id: \.id) { event in
-                HStack(alignment: .top, spacing: Spacing.md) {
-                    Text(event.timeText ?? "—")
-                        .font(AppFont.numeric(13, weight: .semibold))
-                        .foregroundStyle(Color.appInk)
-                        .frame(width: 96, alignment: .trailing)
-                    Text(event.title)
-                        .font(AppFont.body(15))
-                        .foregroundStyle(Color.appInk)
-                    Spacer(minLength: 0)
+                .foregroundStyle(Color.homeMuted)
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                ForEach(Array(events), id: \.id) { event in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(event.timeText ?? "—")
+                            .font(AppFont.numeric(12, weight: .semibold))
+                            .foregroundStyle(Color.homeMuted)
+                        Text(event.title)
+                            .font(AppFont.body(15, weight: .semibold))
+                            .foregroundStyle(Color.homeInk)
+                    }
                 }
             }
         }
@@ -167,18 +173,18 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             Text("Right now")
                 .font(AppFont.sectionHeader)
-                .foregroundStyle(Color.appInk)
+                .foregroundStyle(Color.homeInk)
             Text("Next event and today's schedule will appear here during the trip.")
                 .font(AppFont.bodyText)
-                .foregroundStyle(Color.appMuted)
+                .foregroundStyle(Color.homeMuted)
         }
         .padding(Spacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.appSurface)
+        .background(Color.homeSurface)
         .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
         .overlay(
             RoundedRectangle(cornerRadius: Radius.lg)
-                .stroke(Color.appDivider, lineWidth: 1)
+                .stroke(Color.homeDivider, lineWidth: 1)
         )
     }
 
@@ -187,22 +193,22 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: Spacing.sm) {
                 Text("Trip wrapped")
                     .font(AppFont.sectionHeader)
-                    .foregroundStyle(Color.appInk)
+                    .foregroundStyle(Color.homeInk)
                 Text("\(trip.locationDisplay) · \(String(trip.year))")
                     .font(AppFont.footnote)
-                    .foregroundStyle(Color.appMuted)
+                    .foregroundStyle(Color.homeMuted)
                 Text("See the recap →")
                     .font(AppFont.body(15, weight: .semibold))
-                    .foregroundStyle(Color.appAccent)
+                    .foregroundStyle(Color.homeAccent)
                     .padding(.top, Spacing.xs)
             }
             .padding(Spacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.appSurface)
+            .background(Color.homeSurface)
             .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
             .overlay(
                 RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.appDivider, lineWidth: 1)
+                    .stroke(Color.homeDivider, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
