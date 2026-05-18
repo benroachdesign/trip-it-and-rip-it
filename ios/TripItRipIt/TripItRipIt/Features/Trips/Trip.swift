@@ -75,10 +75,10 @@ extension Trip {
                 startDate: dateFrom("2025-09-25"), endDate: dateFrom("2025-09-29"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
-            featuredCourseName: "Sand Hollow — Championship",
+            featuredCourseName: "Black Desert Resort",
             courseNames: [
-                "Sand Hollow — Championship", "Black Desert Resort",
-                "Wolf Creek", "Coral Canyon", "Green Spring"
+                "Black Desert Resort", "Wolf Creek",
+                "Sand Hollow — Championship", "Coral Canyon", "Green Spring"
             ],
             attendeeNicknames: ["Roach", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek", "Mike"],
             lodgingLabel: "VRBO",

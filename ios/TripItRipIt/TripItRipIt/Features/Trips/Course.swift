@@ -30,6 +30,9 @@ extension Course {
     /// Lookup for bundled asset-catalog photos. Falls back to `heroPhotoUrl`
     /// (remote) when this returns nil. See Assets.xcassets for image set names.
     static let bundledAssetByCourseName: [String: String] = [
+        "Bandon Dunes":                                        "BandonDunes",
+        "Bandon Trails":                                       "BandonTrails",
+        "Bandon Preserve":                                     "BandonPreserve",
         "Pacific Dunes":                                       "PacificDunes",
         "Old Macdonald":                                       "OldMacdonald",
         "Sheep Ranch":                                         "SheepRanch",

@@ -99,16 +99,101 @@ struct CourseDetailView: View {
         }
     }
 
+    @ViewBuilder
     private var signatureHolesSection: some View {
-        sectionPlaceholder(title: "Signature holes", body: "Photo and notes for 1-3 signature holes will live here.")
+        if let holes = course.content?.signatureHoles, !holes.isEmpty {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                SectionLabel(text: "Signature holes")
+                VStack(spacing: 1) {
+                    ForEach(holes) { hole in
+                        SignatureHoleRow(hole: hole)
+                    }
+                }
+                .background(Color.appSurface)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg)
+                        .stroke(Color.appDivider, lineWidth: 1)
+                )
+                .padding(.horizontal, Spacing.lg)
+            }
+        }
     }
 
+    @ViewBuilder
     private var scorecardSection: some View {
-        sectionPlaceholder(title: "Scorecard", body: "Par, yardages by tee box.")
+        if let card = course.content?.scorecard {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                SectionLabel(text: "Scorecard")
+                HStack(spacing: 0) {
+                    scorecardStat(label: "Par", value: String(card.par))
+                    Divider().frame(height: 40).background(Color.appDivider)
+                    scorecardStat(label: "Yardage", value: formattedYardage(card.totalYardage))
+                    Divider().frame(height: 40).background(Color.appDivider)
+                    scorecardStat(label: "Tees", value: card.tee)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Spacing.md)
+                .background(Color.appSurface)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg)
+                        .stroke(Color.appDivider, lineWidth: 1)
+                )
+                .padding(.horizontal, Spacing.lg)
+            }
+        }
     }
 
+    @ViewBuilder
     private var thingsToKnowSection: some View {
-        sectionPlaceholder(title: "Things to know", body: "Caddie norms, terrain, prevailing wind, walking notes.")
+        if let bullets = course.content?.thingsToKnow, !bullets.isEmpty {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                SectionLabel(text: "Things to know")
+                VStack(alignment: .leading, spacing: Spacing.md) {
+                    ForEach(Array(bullets.enumerated()), id: \.offset) { _, bullet in
+                        HStack(alignment: .top, spacing: Spacing.md) {
+                            Circle()
+                                .fill(Color.appAccent)
+                                .frame(width: 5, height: 5)
+                                .padding(.top, 9)
+                            Text(bullet)
+                                .font(AppFont.body(15))
+                                .foregroundStyle(Color.appInk)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(Spacing.lg)
+                .background(Color.appSurface)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg)
+                        .stroke(Color.appDivider, lineWidth: 1)
+                )
+                .padding(.horizontal, Spacing.lg)
+            }
+        }
+    }
+
+    private func scorecardStat(label: String, value: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(AppFont.numeric(20, weight: .semibold))
+                .foregroundStyle(Color.appInk)
+            Text(label.uppercased())
+                .font(AppFont.body(10, weight: .semibold))
+                .tracking(1.2)
+                .foregroundStyle(Color.appMuted)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func formattedYardage(_ y: Int) -> String {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        return f.string(from: NSNumber(value: y)) ?? String(y)
     }
 
     @ViewBuilder
@@ -132,22 +217,40 @@ struct CourseDetailView: View {
         }
     }
 
-    private func sectionPlaceholder(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.md) {
-            SectionLabel(text: title)
-            Text(body)
-                .font(AppFont.footnote)
-                .foregroundStyle(Color.appMuted)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(Spacing.lg)
-                .background(Color.appSurface)
-                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-                .overlay(
-                    RoundedRectangle(cornerRadius: Radius.lg)
-                        .stroke(Color.appDivider, lineWidth: 1)
-                )
-                .padding(.horizontal, Spacing.lg)
+}
+
+private struct SignatureHoleRow: View {
+    let hole: SignatureHole
+
+    var body: some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            VStack(spacing: 2) {
+                Text("HOLE")
+                    .font(AppFont.body(9, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.appMuted)
+                Text("\(hole.number)")
+                    .font(AppFont.display(28, weight: .bold))
+                    .foregroundStyle(Color.appAccent)
+                    .monospacedDigit()
+            }
+            .frame(width: 56)
+            VStack(alignment: .leading, spacing: 4) {
+                if let title = hole.title {
+                    Text(title)
+                        .font(AppFont.body(15, weight: .semibold))
+                        .foregroundStyle(Color.appInk)
+                }
+                Text(hole.note)
+                    .font(AppFont.footnote)
+                    .foregroundStyle(Color.appInk)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            Spacer(minLength: 0)
         }
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.md)
+        .background(Color.appSurface)
     }
 }
 
