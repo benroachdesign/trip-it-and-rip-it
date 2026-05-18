@@ -15,6 +15,7 @@ struct TripEvent: Identifiable, Hashable {
     let title: String
     let subtitle: String?
     let eventType: TripEventType
+    let externalUrl: String?
 
     /// Wall-clock start of the event, derived from its day + minute-of-day.
     var startsAt: Date {
@@ -34,19 +35,23 @@ enum MockTripEvents {
     private static let bandon2026: [TripEvent] = [
         // Thu 7/23
         make("2026-07-23", "5:15 / 5:30 PM", min(17, 15), "Bandon Preserve", nil, .golf),
-        make("2026-07-23", "8:30 PM",        min(20, 30), "The Gallery & Puffin Bar", "Dinner", .meal),
+        make("2026-07-23", "8:30 PM",        min(20, 30), "The Gallery & Puffin Bar", "Dinner", .meal,
+             url: "https://bandondunesgolf.com/dining/restaurants/the-gallery-puffin-bar/"),
         // Fri 7/24
         make("2026-07-24", "10:10 / 10:20 AM", min(10, 10), "Pacific Dunes", nil, .golf),
         make("2026-07-24", "4:30 / 4:45 PM",   min(16, 30), "Shorty's",      nil, .golf),
-        make("2026-07-24", "8:00 PM",          min(20, 0),  "Pacific Grill", "Dinner", .meal),
+        make("2026-07-24", "8:00 PM",          min(20, 0),  "Pacific Grill", "Dinner", .meal,
+             url: "https://bandondunesgolf.com/dining/restaurants/pacific-grill/"),
         // Sat 7/25
         make("2026-07-25", "7:50 / 8:00 AM", min(7, 50),  "Bandon Dunes",   nil, .golf),
         make("2026-07-25", "2:10 / 2:20 PM", min(14, 10), "Old Macdonald",  nil, .golf),
-        make("2026-07-25", "8:00 PM",        min(20, 0),  "Ghost Tree",     "Dinner", .meal),
+        make("2026-07-25", "8:00 PM",        min(20, 0),  "Ghost Tree",     "Dinner", .meal,
+             url: "https://bandondunesgolf.com/dining/restaurants/ghost-tree-grill/"),
         // Sun 7/26
         make("2026-07-26", "7:00 / 7:10 AM", min(7, 0),   "Sheep Ranch",   nil, .golf),
         make("2026-07-26", "1:50 / 2:00 PM", min(13, 50), "Bandon Trails", nil, .golf),
-        make("2026-07-26", "7:30 PM",        min(19, 30), "Trails End",    "Dinner", .meal),
+        make("2026-07-26", "7:30 PM",        min(19, 30), "Trails End",    "Dinner", .meal,
+             url: "https://bandondunesgolf.com/dining/restaurants/trails-end/"),
         // Mon 7/27
         make("2026-07-27", nil, 0, "Depart", "Connoisseurs → Eugene Airport", .transport)
     ]
@@ -75,7 +80,8 @@ enum MockTripEvents {
         _ sortMin: Int,
         _ title: String,
         _ subtitle: String?,
-        _ type: TripEventType
+        _ type: TripEventType,
+        url: String? = nil
     ) -> TripEvent {
         TripEvent(
             date: parseDate(dateString),
@@ -83,7 +89,8 @@ enum MockTripEvents {
             sortableMinute: sortMin,
             title: title,
             subtitle: subtitle,
-            eventType: type
+            eventType: type,
+            externalUrl: url
         )
     }
 

@@ -310,10 +310,20 @@ private struct EventRow: View {
         return Course.find(byName: event.title)
     }
 
+    private var externalUrl: URL? {
+        guard let urlString = event.externalUrl else { return nil }
+        return URL(string: urlString)
+    }
+
     var body: some View {
         if let course = linkedCourse {
             NavigationLink(value: course) {
                 rowContent(trailing: .chevron)
+            }
+            .buttonStyle(.plain)
+        } else if let url = externalUrl {
+            Link(destination: url) {
+                rowContent(trailing: .external)
             }
             .buttonStyle(.plain)
         } else {
@@ -322,7 +332,7 @@ private struct EventRow: View {
     }
 
     private enum TrailingAffordance {
-        case chevron, none
+        case chevron, external, none
     }
 
     private func rowContent(trailing: TrailingAffordance) -> some View {
@@ -349,11 +359,19 @@ private struct EventRow: View {
                 }
             }
             Spacer(minLength: 0)
-            if case .chevron = trailing {
+            switch trailing {
+            case .chevron:
                 Image(systemName: "chevron.right")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color.appMuted.opacity(0.55))
                     .padding(.top, 4)
+            case .external:
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.appMuted.opacity(0.55))
+                    .padding(.top, 4)
+            case .none:
+                EmptyView()
             }
         }
         .padding(.horizontal, Spacing.md)

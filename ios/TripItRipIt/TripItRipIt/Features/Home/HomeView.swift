@@ -122,59 +122,16 @@ struct HomeView: View {
     }
 
     private func upcomingSection(trip: Trip, days: Int) -> some View {
-        NavigationLink(value: trip) {
-            VStack(alignment: .leading, spacing: Spacing.md) {
-                VStack(alignment: .leading, spacing: -8) {
-                    Text(String(days))
-                        .font(AppFont.display(140, weight: .bold))
-                        .foregroundStyle(Color.homeAccent)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                    Text("DAYS UNTIL \(trip.locationCity.uppercased())")
-                        .font(AppFont.body(12, weight: .semibold))
-                        .tracking(2)
-                        .foregroundStyle(Color.homeMuted)
-                }
-                if let range = trip.dateRangeDisplay {
-                    Text(range)
-                        .font(AppFont.headline)
-                        .foregroundStyle(Color.homeInk)
-                }
-                Divider().background(Color.homeDivider).padding(.vertical, Spacing.xs)
-                upcomingPreview(trip: trip)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Spacing.lg)
-            .background(Color.homeSurface)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.homeDivider, lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
+        let currentMember = Member.allMockMembers.first { $0.nickname == greetingNickname }
 
-    private func upcomingPreview(trip: Trip) -> some View {
-        let events = MockTripEvents.events(forYear: trip.year).prefix(3)
-        return VStack(alignment: .leading, spacing: Spacing.md) {
-            Text("FIRST UP")
-                .font(AppFont.body(10, weight: .semibold))
-                .tracking(1.5)
-                .foregroundStyle(Color.homeMuted)
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                ForEach(Array(events), id: \.id) { event in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(event.timeText ?? "—")
-                            .font(AppFont.numeric(12, weight: .semibold))
-                            .foregroundStyle(Color.homeMuted)
-                        Text(event.title)
-                            .font(AppFont.body(15, weight: .semibold))
-                            .foregroundStyle(Color.homeInk)
-                    }
-                }
+        return VStack(spacing: Spacing.lg) {
+            CountdownCard(trip: trip, days: days)
+            if let member = currentMember,
+               LodgingAssignment.bandon2026(for: member.nickname) != nil {
+                LodgingCard(member: member)
             }
+            BandonMapCard()
+            FirstUpCard(trip: trip)
         }
     }
 
@@ -253,6 +210,78 @@ private enum TripState {
     case upcoming(trip: Trip, daysUntil: Int)
     case during(trip: Trip)
     case wrapped(trip: Trip)
+}
+
+private struct CountdownCard: View {
+    let trip: Trip
+    let days: Int
+
+    var body: some View {
+        NavigationLink(value: trip) {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                VStack(alignment: .leading, spacing: -8) {
+                    Text(String(days))
+                        .font(AppFont.display(140, weight: .bold))
+                        .foregroundStyle(Color.homeAccent)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    Text("DAYS UNTIL \(trip.locationCity.uppercased())")
+                        .font(AppFont.body(12, weight: .semibold))
+                        .tracking(2)
+                        .foregroundStyle(Color.homeMuted)
+                }
+                if let range = trip.dateRangeDisplay {
+                    Text(range)
+                        .font(AppFont.headline)
+                        .foregroundStyle(Color.homeInk)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Spacing.lg)
+            .background(Color.homeSurface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+            .overlay(
+                RoundedRectangle(cornerRadius: Radius.lg)
+                    .stroke(Color.homeDivider, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct FirstUpCard: View {
+    let trip: Trip
+
+    var body: some View {
+        let events = MockTripEvents.events(forYear: trip.year).prefix(3)
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("FIRST UP")
+                .font(AppFont.body(11, weight: .semibold))
+                .tracking(2)
+                .foregroundStyle(Color.homeMuted)
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                ForEach(Array(events), id: \.id) { event in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(event.timeText ?? "—")
+                            .font(AppFont.numeric(12, weight: .semibold))
+                            .foregroundStyle(Color.homeMuted)
+                        Text(event.title)
+                            .font(AppFont.body(15, weight: .semibold))
+                            .foregroundStyle(Color.homeInk)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.lg)
+        .background(Color.homeSurface)
+        .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+        .overlay(
+            RoundedRectangle(cornerRadius: Radius.lg)
+                .stroke(Color.homeDivider, lineWidth: 1)
+        )
+    }
 }
 
 private struct NextUpHero: View {

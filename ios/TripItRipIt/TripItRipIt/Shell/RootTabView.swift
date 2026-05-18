@@ -4,7 +4,7 @@ struct RootTabView: View {
     var body: some View {
         TabView {
             NavigationStack { HomeView() }
-                .tabItem { Label("Home", systemImage: "house.fill") }
+                .tabItem { Label("Home", systemImage: "house.lodge.fill") }
 
             NavigationStack { TripsView() }
                 .tabItem { Label("Trips", systemImage: "calendar") }
