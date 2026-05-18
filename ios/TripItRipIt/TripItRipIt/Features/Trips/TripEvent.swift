@@ -53,13 +53,13 @@ enum MockTripEvents {
 
     private static let stGeorge2025: [TripEvent] = [
         // Thu 9/25
-        make("2025-09-25", "2:51 / 3:02 PM", min(14, 51), "Sand Hollow — Championship", nil, .golf),
+        make("2025-09-25", "2:51 / 3:02 PM", min(14, 51), "Sand Hollow Resort — Championship Course", nil, .golf),
         // Fri 9/26
         make("2025-09-26", "10:40 / 10:50 AM", min(10, 40), "Green Spring", nil, .golf),
         make("2025-09-26", "6:15 PM",          min(18, 15), "Painted Pony", "Dinner", .meal),
         // Sat 9/27
-        make("2025-09-27", "10:10 / 10:20 AM", min(10, 10), "Wolf Creek",                nil, .golf),
-        make("2025-09-27", "Lunch",            min(12, 0),  "Greg Norman's Grille",      "At Wolf Creek", .meal),
+        make("2025-09-27", "10:10 / 10:20 AM", min(10, 10), "Wolf Creek Golf Club",     nil, .golf),
+        make("2025-09-27", "Lunch",            min(12, 0),  "Greg Norman's Grille",     "At Wolf Creek", .meal),
         // Sun 9/28
         make("2025-09-28", "8:10 / 8:20 AM", min(8, 10),  "Coral Canyon",        nil, .golf),
         make("2025-09-28", "2:12 / 2:24 PM", min(14, 12), "Black Desert Resort", nil, .golf),

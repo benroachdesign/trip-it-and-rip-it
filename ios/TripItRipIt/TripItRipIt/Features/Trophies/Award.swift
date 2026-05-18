@@ -61,6 +61,33 @@ enum MockAwards {
             recipientNicknames: ["Webb"],
             description: nil,
             isTeamAward: false
+        ),
+        Award(
+            year: 2024,
+            title: "70s Score",
+            category: .scoring,
+            recipientLabel: "Roach",
+            recipientNicknames: ["Roach"],
+            description: "Shot a 79",
+            isTeamAward: false
+        ),
+        Award(
+            year: 2022,
+            title: "Most Casinos Run in a Single Trip",
+            category: .behavior,
+            recipientLabel: "The OGs",
+            recipientNicknames: ["Roach", "Strub", "Mader", "Braden"],
+            description: "Aguas Calientes ×5",
+            isTeamAward: true
+        ),
+        Award(
+            year: 2021,
+            title: "Successfully Dealt With the Cops",
+            category: .tradition,
+            recipientLabel: "Mader",
+            recipientNicknames: ["Mader"],
+            description: nil,
+            isTeamAward: false
         )
     ]
 

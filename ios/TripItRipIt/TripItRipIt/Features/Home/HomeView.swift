@@ -85,8 +85,17 @@ struct HomeView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Sign out") { Task { await auth.signOut() } }
-                    .foregroundStyle(Color.homeInk)
+                Menu {
+                    Button(role: .destructive) {
+                        Task { await auth.signOut() }
+                    } label: {
+                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.homeMuted)
+                }
             }
         }
     }

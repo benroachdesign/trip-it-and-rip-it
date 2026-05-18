@@ -77,8 +77,8 @@ extension Trip {
             ),
             featuredCourseName: "Black Desert Resort",
             courseNames: [
-                "Black Desert Resort", "Wolf Creek",
-                "Sand Hollow — Championship", "Coral Canyon", "Green Spring"
+                "Black Desert Resort", "Wolf Creek Golf Club",
+                "Sand Hollow Resort — Championship Course", "Coral Canyon", "Green Spring"
             ],
             attendeeNicknames: ["Roach", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek", "Mike"],
             lodgingLabel: "VRBO",
@@ -91,10 +91,11 @@ extension Trip {
                 startDate: dateFrom("2024-11-15"), endDate: dateFrom("2024-11-17"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
-            featuredCourseName: "Ventana Canyon — Mountain",
+            featuredCourseName: "Ventana Canyon — Mountain Course",
             courseNames: [
-                "Ventana Canyon — Mountain", "Sewailo",
-                "Tucson National — Sonoran", "Tucson National — Catalina"
+                "Ventana Canyon — Mountain Course", "Sewailo Golf Club",
+                "Tucson National at Omni Resort — Sonoran Course",
+                "Tucson National at Omni Resort — Catalina Course"
             ],
             attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek"],
             lodgingLabel: nil,
@@ -107,8 +108,11 @@ extension Trip {
                 startDate: dateFrom("2023-11-02"), endDate: dateFrom("2023-11-06"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
-            featuredCourseName: "Torrey Pines — South",
-            courseNames: ["Torrey Pines — South", "Maderas", "Aviara"],
+            featuredCourseName: "Torrey Pines Golf Course — South",
+            courseNames: [
+                "Torrey Pines Golf Course — South",
+                "Maderas Golf Club", "Aviara Golf Club"
+            ],
             attendeeNicknames: ["Roach", "Strub", "Mader", "Braden", "Webb", "Tommer", "Lutz", "Derek"],
             lodgingLabel: "Vintage Castle in the Sky",
             lodgingAddress: "7390 Mar Avenue, La Jolla, CA 92037"
@@ -120,10 +124,12 @@ extension Trip {
                 startDate: dateFrom("2022-12-08"), endDate: dateFrom("2022-12-12"),
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
-            featuredCourseName: "PGA West — Mountain",
+            featuredCourseName: "PGA West — Mountain Course",
             courseNames: [
-                "PGA West — Mountain", "Desert Willow — Mountain View",
-                "Desert Springs — Palm", "SilverRock Resort"
+                "PGA West — Mountain Course",
+                "Desert Willow — Mountain View Course",
+                "Desert Springs — Palm Course",
+                "SilverRock Resort"
             ],
             attendeeNicknames: ["Roach", "Strub", "Mader", "Braden"],
             lodgingLabel: "Rancho Mirage Private Oasis",
@@ -136,10 +142,12 @@ extension Trip {
                 startDate: nil, endDate: nil,
                 winningTeamId: nil, heroPhotoUrl: nil, blurb: nil
             ),
-            featuredCourseName: "TPC Scottsdale — Stadium",
+            featuredCourseName: "TPC Scottsdale — Stadium Course",
             courseNames: [
-                "TPC Scottsdale — Stadium", "Troon North — Pinnacle",
-                "We-Ko-Pa — Saguaro", "We-Ko-Pa — Cholla"
+                "TPC Scottsdale — Stadium Course",
+                "Troon North — Pinnacle Course",
+                "We-Ko-Pa — Saguaro Course",
+                "We-Ko-Pa — Cholla Course"
             ],
             attendeeNicknames: ["Roach", "Strub", "Mader", "Braden"],
             lodgingLabel: "Airbnb",

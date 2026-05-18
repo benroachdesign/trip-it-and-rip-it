@@ -91,16 +91,20 @@ private struct TripYearCard: View {
         ZStack(alignment: .bottomLeading) {
             heroImage
             LinearGradient(
-                colors: [.clear, .black.opacity(0.55)],
-                startPoint: .center, endPoint: .bottom
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .clear, location: 0.45),
+                    .init(color: .black.opacity(0.75), location: 1)
+                ],
+                startPoint: .top, endPoint: .bottom
             )
             Text(String(trip.year))
                 .font(AppFont.display(56, weight: .bold))
                 .foregroundStyle(.white)
                 .monospacedDigit()
-                .shadow(color: .black.opacity(0.25), radius: 6, y: 2)
+                .shadow(color: .black.opacity(0.3), radius: 6, y: 2)
                 .padding(.horizontal, Spacing.lg)
-                .padding(.bottom, Spacing.md)
+                .padding(.bottom, Spacing.lg)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 180)

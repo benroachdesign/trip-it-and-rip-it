@@ -1,7 +1,12 @@
 import SwiftUI
+import UIKit
 
 struct TripDetailView: View {
     let trip: Trip
+
+    private var heroCourse: Course? {
+        Trip.mockHeroCourse(for: trip.id)
+    }
 
     private var attendees: [Member] {
         Trip.mockAttendees(for: trip.id)
@@ -36,31 +41,30 @@ struct TripDetailView: View {
     private var heroSection: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             ZStack(alignment: .bottomLeading) {
+                heroBackground
+                    .frame(height: 240)
+                    .clipped()
                 LinearGradient(
-                    colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .clear, location: 0.4),
+                        .init(color: .black.opacity(0.75), location: 1)
+                    ],
+                    startPoint: .top, endPoint: .bottom
                 )
-                .frame(height: 220)
-                .overlay {
-                    if let featured = detail?.featuredCourseName {
-                        Text(featured)
-                            .font(AppFont.display(28, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.55))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, Spacing.lg)
-                    }
-                }
+                .frame(height: 240)
+                .allowsHitTesting(false)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(String(trip.year))
                         .font(AppFont.display(80, weight: .bold))
                         .foregroundStyle(.white)
                         .monospacedDigit()
-                        .shadow(color: .black.opacity(0.3), radius: 8, y: 2)
+                        .shadow(color: .black.opacity(0.35), radius: 8, y: 2)
                     Text(trip.locationDisplay.uppercased())
                         .font(AppFont.caption.weight(.semibold))
                         .tracking(2)
-                        .foregroundStyle(.white.opacity(0.9))
+                        .foregroundStyle(.white.opacity(0.92))
                 }
                 .padding(.horizontal, Spacing.lg)
                 .padding(.bottom, Spacing.lg)
@@ -79,6 +83,45 @@ struct TripDetailView: View {
                 }
             }
             .padding(.horizontal, Spacing.lg)
+        }
+    }
+
+    @ViewBuilder
+    private var heroBackground: some View {
+        if let assetName = heroCourse?.photoAssetName, UIImage(named: assetName) != nil {
+            Image(assetName)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+        } else if let urlString = heroCourse?.heroPhotoUrl ?? trip.heroPhotoUrl,
+                  let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                default:
+                    placeholderHero
+                }
+            }
+            .frame(maxWidth: .infinity)
+        } else {
+            placeholderHero
+        }
+    }
+
+    private var placeholderHero: some View {
+        LinearGradient(
+            colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
+            startPoint: .topLeading, endPoint: .bottomTrailing
+        )
+        .overlay {
+            if let featured = detail?.featuredCourseName {
+                Text(featured)
+                    .font(AppFont.display(28, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.55))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, Spacing.lg)
+            }
         }
     }
 
@@ -126,14 +169,24 @@ struct TripDetailView: View {
         let days = groups.keys.sorted()
         return VStack(alignment: .leading, spacing: Spacing.md) {
             SectionLabel(text: "Schedule")
-            VStack(spacing: Spacing.lg) {
-                ForEach(days, id: \.self) { day in
-                    DaySchedule(
+            VStack(spacing: 0) {
+                ForEach(Array(days.enumerated()), id: \.offset) { dayIndex, day in
+                    if dayIndex > 0 {
+                        Divider().background(Color.appDivider)
+                    }
+                    DayBlock(
                         day: day,
-                        events: (groups[day] ?? []).sorted { $0.sortableMinute < $1.sortableMinute }
+                        events: (groups[day] ?? []).sorted { $0.sortableMinute < $1.sortableMinute },
+                        isFirst: dayIndex == 0
                     )
                 }
             }
+            .background(Color.appSurface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+            .overlay(
+                RoundedRectangle(cornerRadius: Radius.lg)
+                    .stroke(Color.appDivider, lineWidth: 1)
+            )
             .padding(.horizontal, Spacing.lg)
         }
     }
@@ -184,58 +237,61 @@ private struct AttendeeAvatar: View {
 
     var body: some View {
         VStack(spacing: Spacing.xs) {
-            ZStack(alignment: .topTrailing) {
-                MemberAvatar(member: member, size: 56)
-                if member.isOg {
-                    Text("OG")
-                        .font(AppFont.body(9, weight: .bold))
-                        .tracking(0.5)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 5).padding(.vertical, 1.5)
-                        .background(Color.appAccent)
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color.appBackground, lineWidth: 2))
-                        .offset(x: 4, y: -4)
-                } else if member.isGuest {
-                    Text("G")
-                        .font(AppFont.body(9, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 16, height: 16)
-                        .background(Color.appMuted)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.appBackground, lineWidth: 2))
-                        .offset(x: 4, y: -4)
+            MemberAvatar(member: member, size: 56)
+                .overlay(alignment: .topTrailing) {
+                    badge
+                        .alignmentGuide(.top) { d in d[.top] + 6 }
+                        .alignmentGuide(.trailing) { d in d[.trailing] - 4 }
                 }
-            }
+                .padding(.top, 6)
+                .padding(.trailing, 6)
             Text(member.nickname ?? member.fullName)
                 .font(AppFont.caption)
                 .foregroundStyle(Color.appInk)
         }
-        .frame(width: 72)
+        .frame(width: 80)
+    }
+
+    @ViewBuilder
+    private var badge: some View {
+        if member.isOg {
+            Text("OG")
+                .font(AppFont.body(9, weight: .bold))
+                .tracking(0.5)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 5).padding(.vertical, 1.5)
+                .background(Color.appAccent)
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.appBackground, lineWidth: 2))
+        } else if member.isGuest {
+            Text("G")
+                .font(AppFont.body(9, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 18, height: 18)
+                .background(Color.appMuted)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.appBackground, lineWidth: 2))
+        }
     }
 }
 
-private struct DaySchedule: View {
+private struct DayBlock: View {
     let day: Date
     let events: [TripEvent]
+    let isFirst: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(dayHeaderText)
-                .font(AppFont.body(12, weight: .semibold))
+                .font(AppFont.body(11, weight: .semibold))
                 .tracking(1.5)
                 .foregroundStyle(Color.appAccent)
-            VStack(spacing: 1) {
-                ForEach(events) { event in
-                    EventRow(event: event)
-                }
+                .padding(.horizontal, Spacing.md)
+                .padding(.top, isFirst ? Spacing.md : Spacing.md + 2)
+                .padding(.bottom, Spacing.xs)
+            ForEach(events) { event in
+                EventRow(event: event)
             }
-            .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.appDivider, lineWidth: 1)
-            )
         }
     }
 
@@ -249,20 +305,37 @@ private struct DaySchedule: View {
 private struct EventRow: View {
     let event: TripEvent
 
+    private var linkedCourse: Course? {
+        guard event.eventType == .golf else { return nil }
+        return Course.find(byName: event.title)
+    }
+
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.md) {
-            VStack(alignment: .trailing, spacing: 0) {
-                Text(event.timeText ?? "—")
-                    .font(AppFont.numeric(13, weight: .semibold))
-                    .foregroundStyle(Color.appInk)
-                    .multilineTextAlignment(.trailing)
+        if let course = linkedCourse {
+            NavigationLink(value: course) {
+                rowContent(trailing: .chevron)
             }
-            .frame(width: 96, alignment: .trailing)
+            .buttonStyle(.plain)
+        } else {
+            rowContent(trailing: .none)
+        }
+    }
+
+    private enum TrailingAffordance {
+        case chevron, none
+    }
+
+    private func rowContent(trailing: TrailingAffordance) -> some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            Text(event.timeText ?? "—")
+                .font(AppFont.numeric(13, weight: .semibold))
+                .foregroundStyle(Color.appInk)
+                .frame(width: 92, alignment: .trailing)
 
             Image(systemName: iconName)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(iconColor)
-                .frame(width: 16, alignment: .center)
+                .frame(width: 16)
                 .padding(.top, 4)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -276,10 +349,16 @@ private struct EventRow: View {
                 }
             }
             Spacer(minLength: 0)
+            if case .chevron = trailing {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.appMuted.opacity(0.55))
+                    .padding(.top, 4)
+            }
         }
         .padding(.horizontal, Spacing.md)
-        .padding(.vertical, Spacing.md)
-        .background(Color.appSurface)
+        .padding(.vertical, Spacing.sm + 2)
+        .contentShape(Rectangle())
     }
 
     private var iconName: String {
