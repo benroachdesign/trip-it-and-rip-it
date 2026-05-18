@@ -27,6 +27,43 @@ extension Course {
         }
     }
 
+    /// Lookup for bundled asset-catalog photos. Falls back to `heroPhotoUrl`
+    /// (remote) when this returns nil. See Assets.xcassets for image set names.
+    static let bundledAssetByCourseName: [String: String] = [
+        "Pacific Dunes":                                       "PacificDunes",
+        "Old Macdonald":                                       "OldMacdonald",
+        "Sheep Ranch":                                         "SheepRanch",
+        "Shorty's":                                            "Shortys",
+        "PGA West — Mountain Course":                          "PGAWestMountain",
+        "Desert Springs — Palm Course":                        "DesertSprings",
+        "Desert Willow — Mountain View Course":                "DesertWillow",
+        "SilverRock Resort":                                   "SilverRock",
+        "Aviara Golf Club":                                    "Aviara",
+        "Maderas Golf Club":                                   "Maderas",
+        "Torrey Pines Golf Course — South":                    "TorreyPinesSouth",
+        "TPC Scottsdale — Stadium Course":                     "TPCStadium",
+        "Troon North — Pinnacle Course":                       "TroonNorthPinnacle",
+        "We-Ko-Pa — Cholla Course":                            "WeKoPaCholla",
+        "We-Ko-Pa — Saguaro Course":                           "WeKoPaSaguaro",
+        "Black Desert Resort":                                 "BlackDesert",
+        "Coral Canyon":                                        "CoralCanyon",
+        "Green Spring":                                        "GreenSpring",
+        "Sand Hollow Resort — Championship Course":            "SandHollow",
+        "Wolf Creek Golf Club":                                "WolfCreek",
+        "Tucson National at Omni Resort — Catalina Course":    "TucsonNationalCatalina",
+        "Tucson National at Omni Resort — Sonoran Course":     "TucsonNationalSonoran",
+        "Sewailo Golf Club":                                   "Sewailo",
+        "Ventana Canyon — Mountain Course":                    "VentanaCanyonMountain"
+    ]
+
+    var photoAssetName: String? {
+        Course.bundledAssetByCourseName[name]
+    }
+
+    var hasAnyPhoto: Bool {
+        photoAssetName != nil || heroPhotoUrl != nil
+    }
+
     static let allMockCourses: [Course] = [
         mock("TPC Scottsdale — Stadium Course", "Scottsdale", "AZ", "Tom Weiskopf & Jay Morrish", 1986),
         mock("Troon North — Pinnacle Course",   "Scottsdale", "AZ", "Tom Weiskopf", 1996),

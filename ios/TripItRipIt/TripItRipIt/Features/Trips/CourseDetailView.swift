@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CourseDetailView: View {
     let course: Course
@@ -29,7 +30,11 @@ struct CourseDetailView: View {
 
     private var heroSection: some View {
         ZStack {
-            if let urlString = course.heroPhotoUrl, let url = URL(string: urlString) {
+            if let assetName = course.photoAssetName, UIImage(named: assetName) != nil {
+                Image(assetName)
+                    .resizable()
+                    .scaledToFill()
+            } else if let urlString = course.heroPhotoUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):

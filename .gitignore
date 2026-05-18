@@ -26,3 +26,7 @@ ios/Pods/
 # Supabase CLI (local-only state)
 supabase/.branches/
 supabase/.temp/
+
+# Accidental 'save webpage as' downloads under course-photos/
+course-photos/*.html
+course-photos/*_files/
