@@ -77,34 +77,45 @@ struct MemberProfileView: View {
 
     @ViewBuilder
     private var bioSection: some View {
-        VStack(alignment: .leading, spacing: Spacing.md) {
-            sectionLabel("Bio")
-            if let bio = member.bio, !bio.isEmpty {
-                Text(bio)
+        if let card = member.card {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                sectionLabel("Trading card")
+                VStack(spacing: 0) {
+                    cardRow(label: "Catchphrase",       value: "\u{201C}\(card.catchphrase)\u{201D}")
+                    cardRow(label: "Signature shot",    value: card.signatureShot)
+                    cardRow(label: "Most likely to",    value: card.mostLikelyTo)
+                    cardRow(label: "Drink of choice",   value: card.drinkOfChoice)
+                    cardRow(label: "Walk-up song",      value: card.walkUpSong)
+                    cardRow(label: "Bag liability",     value: card.bagLiability, isLast: true)
+                }
+                .background(Color.appSurface)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg)
+                        .stroke(Color.appDivider, lineWidth: 1)
+                )
+                .padding(.horizontal, Spacing.lg)
+            }
+        }
+    }
+
+    private func cardRow(label: String, value: String, isLast: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top, spacing: Spacing.md) {
+                Text(label.uppercased())
+                    .font(AppFont.body(10, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.appMuted)
+                    .frame(width: 110, alignment: .leading)
+                Text(value)
                     .font(AppFont.body(15))
                     .foregroundStyle(Color.appInk)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(Spacing.lg)
-                    .background(Color.appSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Radius.lg)
-                            .stroke(Color.appDivider, lineWidth: 1)
-                    )
-                    .padding(.horizontal, Spacing.lg)
-            } else {
-                Text("Bio coming soon.")
-                    .font(AppFont.footnote)
-                    .foregroundStyle(Color.appMuted)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(Spacing.lg)
-                    .background(Color.appSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Radius.lg)
-                            .stroke(Color.appDivider, lineWidth: 1)
-                    )
-                    .padding(.horizontal, Spacing.lg)
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.md)
+            if !isLast {
+                Divider().background(Color.appDivider)
             }
         }
     }
