@@ -315,6 +315,16 @@ private struct EventRow: View {
         return URL(string: urlString)
     }
 
+    /// Subtitle to display under the title. For golf events with a known
+    /// scorecard, this becomes "18 Holes · Par 71"; otherwise falls through
+    /// to whatever was set on the event itself (e.g. "Dinner").
+    private var resolvedSubtitle: String? {
+        if let card = linkedCourse?.content?.scorecard {
+            return "\(card.holes) Holes  ·  Par \(card.par)"
+        }
+        return event.subtitle
+    }
+
     var body: some View {
         if let course = linkedCourse {
             NavigationLink(value: course) {
@@ -352,7 +362,7 @@ private struct EventRow: View {
                 Text(event.title)
                     .font(AppFont.body(15, weight: .semibold))
                     .foregroundStyle(Color.appInk)
-                if let subtitle = event.subtitle {
+                if let subtitle = resolvedSubtitle {
                     Text(subtitle)
                         .font(AppFont.footnote)
                         .foregroundStyle(Color.appMuted)

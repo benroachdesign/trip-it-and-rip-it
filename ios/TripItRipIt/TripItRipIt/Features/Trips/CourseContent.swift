@@ -14,6 +14,7 @@ struct SignatureHole: Identifiable, Hashable {
 }
 
 struct Scorecard: Hashable {
+    let holes: Int
     let par: Int
     let totalYardage: Int
     let tee: String
@@ -40,7 +41,7 @@ extension Course {
                 "Wind dictates everything. Club selection swings wildly during a single round.",
                 "Walking only. Firm and fast turf year-round."
             ],
-            scorecard: Scorecard(par: 71, totalYardage: 6633, tee: "Pacific")
+            scorecard: Scorecard(holes: 18, par: 71, totalYardage: 6633, tee: "Pacific")
         ),
 
         "Bandon Dunes": CourseContent(
@@ -58,7 +59,7 @@ extension Course {
                 "Best played in the morning before the afternoon wind picks up.",
                 "Closing stretch (16-17-18) is the most photographed sequence at the resort."
             ],
-            scorecard: Scorecard(par: 72, totalYardage: 6732, tee: "Bandon")
+            scorecard: Scorecard(holes: 18, par: 72, totalYardage: 6732, tee: "Bandon")
         ),
 
         "Old Macdonald": CourseContent(
@@ -76,7 +77,7 @@ extension Course {
                 "Most exposed of all the Bandon courses — the wind has nowhere to hide.",
                 "Often the 'fun' round — high scoring opportunities AND high disaster potential."
             ],
-            scorecard: Scorecard(par: 71, totalYardage: 6944, tee: "Macdonald")
+            scorecard: Scorecard(holes: 18, par: 71, totalYardage: 6944, tee: "Macdonald")
         ),
 
         "Sheep Ranch": CourseContent(
@@ -94,7 +95,7 @@ extension Course {
                 "Zero bunkers. Hazards are dunes, native grasses, and the cliffs themselves.",
                 "Most exposed to weather of any course here — bring an extra layer."
             ],
-            scorecard: Scorecard(par: 72, totalYardage: 6800, tee: "Sheep")
+            scorecard: Scorecard(holes: 18, par: 72, totalYardage: 6800, tee: "Sheep")
         ),
 
         "Bandon Trails": CourseContent(
@@ -112,7 +113,7 @@ extension Course {
                 "Wind is muted in the trees — often the lowest-scoring round of the trip.",
                 "A welcome change of scenery in the middle of a multi-day stay."
             ],
-            scorecard: Scorecard(par: 71, totalYardage: 6788, tee: "Trails")
+            scorecard: Scorecard(holes: 18, par: 71, totalYardage: 6788, tee: "Trails")
         ),
 
         "Bandon Preserve": CourseContent(
@@ -128,7 +129,7 @@ extension Course {
                 "Walks in about 2 hours. Perfect arrival-day warmup or before-dinner round.",
                 "Walking only, push carts allowed. Best played at sunset."
             ],
-            scorecard: Scorecard(par: 39, totalYardage: 1490, tee: "Preserve")
+            scorecard: Scorecard(holes: 13, par: 39, totalYardage: 1490, tee: "Preserve")
         ),
 
         "Shorty's": CourseContent(
@@ -144,7 +145,7 @@ extension Course {
                 "Walks in about an hour. Great between dinner and bedtime.",
                 "Walking only. Push carts allowed."
             ],
-            scorecard: Scorecard(par: 54, totalYardage: 1875, tee: "Shorty")
+            scorecard: Scorecard(holes: 19, par: 54, totalYardage: 1875, tee: "Shorty")
         )
     ]
 }
