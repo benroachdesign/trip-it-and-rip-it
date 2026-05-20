@@ -16,15 +16,7 @@ struct RosterView: View {
             } else if members.isEmpty {
                 ProgressView().controlSize(.large)
             } else {
-                List(members) { member in
-                    NavigationLink(value: member) {
-                        MemberRow(member: member)
-                    }
-                    .listRowInsets(EdgeInsets(top: Spacing.sm, leading: Spacing.lg, bottom: Spacing.sm, trailing: Spacing.lg))
-                    .hapticOnTap(.soft)
-                }
-                .listStyle(.plain)
-                .refreshable { await load() }
+                rosterContent
             }
         }
         .background(Color.appBackground)
@@ -34,6 +26,70 @@ struct RosterView: View {
             MemberProfileView(member: member)
         }
         .task { await load() }
+    }
+
+    private var rosterContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                rosterHero
+                membersList
+            }
+            .padding(.bottom, Spacing.xl)
+        }
+        .refreshable { await load() }
+    }
+
+    private var rosterHero: some View {
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            HStack(spacing: Spacing.sm) {
+                Image(systemName: "person.2.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(Color.appAccent)
+                    .accessibilityHidden(true)
+                Text("Roster")
+                    .font(AppFont.largeTitle)
+                    .foregroundStyle(Color.appInk)
+            }
+            Text("The boys, in attendance order.")
+                .font(AppFont.footnote)
+                .foregroundStyle(Color.appMuted)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Spacing.lg)
+        .padding(.top, Spacing.md)
+        .padding(.bottom, Spacing.lg)
+    }
+
+    private var membersList: some View {
+        LazyVStack(spacing: 0) {
+            ForEach(Array(members.enumerated()), id: \.element.id) { index, member in
+                NavigationLink(value: member) {
+                    memberRowContent(member: member)
+                }
+                .buttonStyle(.plain)
+                .hapticOnTap(.soft)
+                if index < members.count - 1 {
+                    Rectangle()
+                        .fill(Color.appDivider)
+                        .frame(height: 1)
+                        .padding(.leading, Spacing.lg + 44 + Spacing.md)
+                }
+            }
+        }
+    }
+
+    private func memberRowContent(member: Member) -> some View {
+        HStack(spacing: Spacing.sm) {
+            MemberRow(member: member)
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Color.appMuted.opacity(0.55))
+                .accessibilityHidden(true)
+        }
+        .padding(.horizontal, Spacing.lg)
+        .padding(.vertical, Spacing.sm)
+        .contentShape(Rectangle())
     }
 
     private func load() async {

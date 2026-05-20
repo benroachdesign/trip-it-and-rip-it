@@ -6,6 +6,10 @@ struct MarqueeText: View {
     var spacing: CGFloat = 40
 
     @State private var textWidth: CGFloat = 0
+    @State private var pausedAccumulated: TimeInterval = 0
+    @State private var pauseStart: Date?
+
+    private var isPaused: Bool { pauseStart != nil }
 
     var body: some View {
         Color.clear
@@ -24,14 +28,20 @@ struct MarqueeText: View {
                     startPoint: .leading, endPoint: .trailing
                 )
             )
+            .contentShape(Rectangle())
+            .onTapGesture { togglePause() }
+            .accessibilityLabel(text)
+            .accessibilityHint(isPaused ? "Tap to resume scrolling" : "Tap to pause scrolling")
     }
 
     private var marqueeContent: some View {
         TimelineView(.animation) { context in
-            let elapsed = context.date.timeIntervalSinceReferenceDate
+            let live = context.date.timeIntervalSinceReferenceDate
+            let pausedNow = pauseStart.map { Date().timeIntervalSince($0) } ?? 0
+            let effectiveElapsed = live - pausedAccumulated - pausedNow
             let loopDistance = textWidth + spacing
             let offset: CGFloat = loopDistance > 0
-                ? -CGFloat((elapsed * Double(speed)).truncatingRemainder(dividingBy: Double(loopDistance)))
+                ? -CGFloat((effectiveElapsed * Double(speed)).truncatingRemainder(dividingBy: Double(loopDistance)))
                 : 0
 
             HStack(spacing: spacing) {
@@ -45,6 +55,16 @@ struct MarqueeText: View {
             }
             .offset(x: offset)
         }
+    }
+
+    private func togglePause() {
+        if let start = pauseStart {
+            pausedAccumulated += Date().timeIntervalSince(start)
+            pauseStart = nil
+        } else {
+            pauseStart = Date()
+        }
+        Haptics.tap(.soft)
     }
 }
 

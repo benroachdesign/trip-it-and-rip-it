@@ -17,8 +17,12 @@ enum AppFont {
     static let largeTitle    = display(34, weight: .bold)
     static let title         = display(28, weight: .semibold)
     static let sectionHeader = display(20, weight: .semibold)
-    static let headline      = body(17, weight: .semibold)
-    static let bodyText      = body(17)
-    static let footnote      = body(13)
-    static let caption       = body(12)
+
+    // Body-text tokens use system text styles so they respect Dynamic Type.
+    // Display sizes above stay fixed so the editorial hero typography
+    // doesn't get blown out by accessibility-5.
+    static let headline      = Font.system(.headline, design: .default).weight(.semibold)
+    static let bodyText      = Font.system(.body, design: .default)
+    static let footnote      = Font.system(.footnote, design: .default)
+    static let caption       = Font.system(.caption, design: .default)
 }

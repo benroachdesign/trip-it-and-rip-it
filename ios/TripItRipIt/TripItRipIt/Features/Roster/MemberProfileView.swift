@@ -20,6 +20,34 @@ struct MemberProfileView: View {
         .navigationDestination(for: Trip.self) { trip in
             TripDetailView(trip: trip)
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                shareButton
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shareButton: some View {
+        if let image = renderedShareImage() {
+            ShareLink(
+                item: image,
+                preview: SharePreview(member.fullName, image: image)
+            ) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .accessibilityLabel("Share profile")
+            .hapticOnTap(.soft)
+        }
+    }
+
+    @MainActor
+    private func renderedShareImage() -> Image? {
+        let renderer = ImageRenderer(content: MemberShareCard(member: member))
+        renderer.scale = 2.0
+        guard let ui = renderer.uiImage else { return nil }
+        return Image(uiImage: ui)
     }
 
     private var hero: some View {
