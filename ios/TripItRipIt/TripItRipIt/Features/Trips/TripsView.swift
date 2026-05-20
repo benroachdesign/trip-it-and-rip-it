@@ -150,28 +150,33 @@ private struct TripYearCard: View {
 
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(alignment: .lastTextBaseline, spacing: 14) {
-                    Text(String(trip.year))
-                        .font(AppFont.display(48, weight: .bold))
-                        .foregroundStyle(Color.appAccent)
-                        .monospacedDigit()
-                        .lineLimit(1)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(String(trip.year))
+                    .font(AppFont.display(48, weight: .bold))
+                    .foregroundStyle(Color.appAccent)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                HStack(spacing: 10) {
                     Text(trip.locationDisplay.uppercased())
                         .font(AppFont.caption.weight(.semibold))
                         .tracking(2)
                         .foregroundStyle(Color.appMuted)
                         .lineLimit(1)
                         .minimumScaleFactor(0.85)
-                }
-                if let dateRange = trip.dateRangeDisplay {
-                    Text(dateRange)
-                        .font(AppFont.footnote)
-                        .foregroundStyle(Color.appMuted)
+                    if let dateRange = trip.dateRangeDisplay {
+                        Text("·")
+                            .font(AppFont.caption.weight(.semibold))
+                            .foregroundStyle(Color.appMuted)
+                        Text(dateRange.uppercased())
+                            .font(AppFont.caption.weight(.semibold))
+                            .tracking(2)
+                            .foregroundStyle(Color.appMuted)
+                            .lineLimit(1)
+                    }
                 }
             }
             if !courseNames.isEmpty {
-                MarqueeText(text: courseNames.joined(separator: "  ·  ") + "   •  •  •  ")
+                MarqueeText(text: courseNames.joined(separator: "  ·  "))
                     .font(AppFont.caption)
                     .foregroundStyle(Color.appMuted)
             }
