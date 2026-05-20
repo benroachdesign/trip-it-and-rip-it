@@ -86,6 +86,9 @@ private struct TripYearCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             heroSection
+            Rectangle()
+                .fill(Color.appDivider)
+                .frame(height: 1)
             infoSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -148,33 +151,33 @@ private struct TripYearCard: View {
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(trip.year))
-                    .font(AppFont.display(48, weight: .bold))
-                    .foregroundStyle(Color.appInk)
-                    .monospacedDigit()
-                HStack(spacing: 8) {
-                    Rectangle()
-                        .fill(Color.appMuted.opacity(0.45))
-                        .frame(width: 24, height: 1)
+                HStack(alignment: .lastTextBaseline, spacing: 14) {
+                    Text(String(trip.year))
+                        .font(AppFont.display(48, weight: .bold))
+                        .foregroundStyle(Color.appAccent)
+                        .monospacedDigit()
+                        .lineLimit(1)
                     Text(trip.locationDisplay.uppercased())
                         .font(AppFont.caption.weight(.semibold))
                         .tracking(2)
                         .foregroundStyle(Color.appMuted)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
-            }
-            if let dateRange = trip.dateRangeDisplay {
-                Text(dateRange)
-                    .font(AppFont.footnote)
-                    .foregroundStyle(Color.appMuted)
+                if let dateRange = trip.dateRangeDisplay {
+                    Text(dateRange)
+                        .font(AppFont.footnote)
+                        .foregroundStyle(Color.appMuted)
+                }
             }
             if !courseNames.isEmpty {
                 MarqueeText(text: courseNames.joined(separator: "  ·  ") + "   •  •  •  ")
                     .font(AppFont.caption)
                     .foregroundStyle(Color.appMuted)
-                    .padding(.top, Spacing.xs)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Spacing.lg)
+        .padding(.horizontal, Spacing.lg)
+        .padding(.vertical, Spacing.md)
     }
 }
