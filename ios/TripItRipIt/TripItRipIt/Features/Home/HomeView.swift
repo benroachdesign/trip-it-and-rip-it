@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HomeView: View {
     @Environment(AuthViewModel.self) private var auth
@@ -299,21 +300,16 @@ private struct FirstUpCard: View {
                 .font(AppFont.body(11, weight: .semibold))
                 .tracking(2)
                 .foregroundStyle(Color.homeMuted)
-            VStack(alignment: .leading, spacing: Spacing.sm) {
+                .padding(.horizontal, Spacing.md)
+                .padding(.top, Spacing.md)
+            VStack(spacing: 1) {
                 ForEach(Array(events), id: \.id) { event in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(event.timeText ?? "—")
-                            .font(AppFont.numeric(12, weight: .semibold))
-                            .foregroundStyle(Color.homeMuted)
-                        Text(event.title)
-                            .font(AppFont.body(15, weight: .semibold))
-                            .foregroundStyle(Color.homeInk)
-                    }
+                    HomeEventRow(event: event)
                 }
             }
+            .padding(.bottom, Spacing.xs)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Spacing.lg)
         .background(Color.homeSurface)
         .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
         .overlay(
@@ -327,28 +323,66 @@ private struct NextUpHero: View {
     let event: TripEvent
     let now: Date
 
+    private var linkedCourse: Course? {
+        guard event.eventType == .golf else { return nil }
+        return Course.find(byName: event.title)
+    }
+
+    private var externalUrl: URL? {
+        guard let urlString = event.externalUrl else { return nil }
+        return URL(string: urlString)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
-            Text("NEXT UP IN \(countdownText)")
-                .font(AppFont.body(11, weight: .semibold))
-                .tracking(1.8)
-                .foregroundStyle(Color.homeAccent)
-            Text(event.title)
-                .font(AppFont.display(36, weight: .bold))
-                .foregroundStyle(Color.homeInk)
-                .lineLimit(2)
-            HStack(spacing: Spacing.sm) {
-                Image(systemName: iconName)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Color.homeMuted)
-                Text(headerLine)
-                    .font(AppFont.numeric(14, weight: .semibold))
-                    .foregroundStyle(Color.homeMuted)
+        if let course = linkedCourse {
+            NavigationLink(value: course) {
+                cardBody(trailing: .chevron)
             }
-            if let subtitle = event.subtitle {
-                Text(subtitle)
-                    .font(AppFont.footnote)
-                    .foregroundStyle(Color.homeMuted)
+            .buttonStyle(.plain)
+            .hapticOnTap(.soft)
+        } else if let url = externalUrl {
+            Link(destination: url) {
+                cardBody(trailing: .external)
+            }
+            .buttonStyle(.plain)
+            .hapticOnTap(.soft)
+        } else {
+            cardBody(trailing: .none)
+        }
+    }
+
+    private enum Trailing { case chevron, external, none }
+
+    private func cardBody(trailing: Trailing) -> some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                Text("NEXT UP IN \(countdownText)")
+                    .font(AppFont.body(11, weight: .semibold))
+                    .tracking(1.8)
+                    .foregroundStyle(Color.homeAccent)
+                Text(event.title)
+                    .font(AppFont.display(36, weight: .bold))
+                    .foregroundStyle(Color.homeInk)
+                    .lineLimit(2)
+                HStack(spacing: Spacing.sm) {
+                    Image(systemName: iconName)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Color.homeMuted)
+                        .accessibilityHidden(true)
+                    Text(headerLine)
+                        .font(AppFont.numeric(14, weight: .semibold))
+                        .foregroundStyle(Color.homeMuted)
+                }
+                if let subtitle = event.subtitle {
+                    Text(subtitle)
+                        .font(AppFont.footnote)
+                        .foregroundStyle(Color.homeMuted)
+                }
+            }
+            Spacer(minLength: 0)
+            VStack(alignment: .trailing, spacing: Spacing.sm) {
+                heroThumbnail
+                trailingAffordance(trailing)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -359,6 +393,39 @@ private struct NextUpHero: View {
             RoundedRectangle(cornerRadius: Radius.lg)
                 .stroke(Color.homeAccent.opacity(0.4), lineWidth: 1)
         )
+    }
+
+    @ViewBuilder
+    private var heroThumbnail: some View {
+        if let course = linkedCourse,
+           let assetName = course.photoAssetName,
+           UIImage(named: assetName) != nil {
+            Image(assetName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+        } else {
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func trailingAffordance(_ trailing: Trailing) -> some View {
+        switch trailing {
+        case .chevron:
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.homeMuted.opacity(0.6))
+                .accessibilityHidden(true)
+        case .external:
+            Image(systemName: "arrow.up.right.square")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.homeMuted.opacity(0.6))
+                .accessibilityHidden(true)
+        case .none:
+            EmptyView()
+        }
     }
 
     private var countdownText: String {
@@ -403,7 +470,7 @@ private struct TodaySchedule: View {
                 .foregroundStyle(Color.homeMuted)
             VStack(spacing: 1) {
                 ForEach(events) { event in
-                    SmallEventRow(event: event, now: now)
+                    HomeEventRow(event: event)
                 }
             }
             .background(Color.homeSurface)
@@ -423,39 +490,11 @@ private struct TomorrowPreview: View {
                 .foregroundStyle(Color.homeMuted)
             VStack(spacing: 1) {
                 ForEach(events) { event in
-                    SmallEventRow(event: event, now: nil)
+                    HomeEventRow(event: event)
                 }
             }
             .background(Color.homeSurface)
             .clipShape(RoundedRectangle(cornerRadius: Radius.md))
         }
-    }
-}
-
-private struct SmallEventRow: View {
-    let event: TripEvent
-    let now: Date?
-
-    var body: some View {
-        HStack(alignment: .top, spacing: Spacing.md) {
-            Text(event.timeText ?? "—")
-                .font(AppFont.numeric(12, weight: .semibold))
-                .foregroundStyle(Color.homeMuted)
-                .frame(width: 96, alignment: .trailing)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(event.title)
-                    .font(AppFont.body(15, weight: .semibold))
-                    .foregroundStyle(Color.homeInk)
-                if let subtitle = event.subtitle {
-                    Text(subtitle)
-                        .font(AppFont.caption)
-                        .foregroundStyle(Color.homeMuted)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, Spacing.md)
-        .padding(.vertical, Spacing.sm)
-        .background(Color.homeSurface)
     }
 }
