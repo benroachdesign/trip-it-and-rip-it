@@ -98,40 +98,11 @@ private struct TripYearCard: View {
     }
 
     private var heroSection: some View {
-        ZStack(alignment: .bottomLeading) {
-            heroImage
-                .filmGrain()
-            LinearGradient(
-                stops: [
-                    .init(color: .clear, location: 0),
-                    .init(color: .black.opacity(0.25), location: 0.4),
-                    .init(color: .black.opacity(0.92), location: 1)
-                ],
-                startPoint: .top, endPoint: .bottom
-            )
-            VStack(alignment: .leading, spacing: 8) {
-                Text(String(trip.year))
-                    .font(AppFont.display(56, weight: .bold))
-                    .foregroundStyle(.white)
-                    .monospacedDigit()
-                    .shadow(color: .black.opacity(0.5), radius: 8, y: 2)
-                HStack(spacing: 10) {
-                    Rectangle()
-                        .fill(Color.white.opacity(0.6))
-                        .frame(width: 28, height: 1)
-                    Text(trip.locationDisplay.uppercased())
-                        .font(AppFont.caption.weight(.semibold))
-                        .tracking(2)
-                        .foregroundStyle(.white.opacity(0.95))
-                        .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
-                }
-            }
-            .padding(.horizontal, Spacing.lg)
-            .padding(.bottom, Spacing.lg)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 180)
-        .clipped()
+        heroImage
+            .filmGrain()
+            .frame(maxWidth: .infinity)
+            .frame(height: 180)
+            .clipped()
     }
 
     @ViewBuilder
@@ -175,11 +146,26 @@ private struct TripYearCard: View {
     }
 
     private var infoSection: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(trip.year))
+                    .font(AppFont.display(48, weight: .bold))
+                    .foregroundStyle(Color.appInk)
+                    .monospacedDigit()
+                HStack(spacing: 8) {
+                    Rectangle()
+                        .fill(Color.appMuted.opacity(0.45))
+                        .frame(width: 24, height: 1)
+                    Text(trip.locationDisplay.uppercased())
+                        .font(AppFont.caption.weight(.semibold))
+                        .tracking(2)
+                        .foregroundStyle(Color.appMuted)
+                }
+            }
             if let dateRange = trip.dateRangeDisplay {
                 Text(dateRange)
-                    .font(AppFont.headline)
-                    .foregroundStyle(Color.appInk)
+                    .font(AppFont.footnote)
+                    .foregroundStyle(Color.appMuted)
             }
             if !courseNames.isEmpty {
                 MarqueeText(text: courseNames.joined(separator: "  ·  ") + "   •  •  •  ")
