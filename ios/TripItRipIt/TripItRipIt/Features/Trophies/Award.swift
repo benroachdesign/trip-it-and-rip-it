@@ -115,6 +115,51 @@ enum MockAwards {
             recipientNicknames: ["Mader"],
             description: nil,
             isTeamAward: false
+        ),
+        Award(
+            year: 2025,
+            title: "Course of the Year",
+            category: .other,
+            recipientLabel: "Wolf Creek Golf Club",
+            recipientNicknames: [],
+            description: nil,
+            isTeamAward: false
+        ),
+        Award(
+            year: 2024,
+            title: "Course of the Year",
+            category: .other,
+            recipientLabel: "Ventana Canyon — Mountain Course",
+            recipientNicknames: [],
+            description: nil,
+            isTeamAward: false
+        ),
+        Award(
+            year: 2023,
+            title: "Course of the Year",
+            category: .other,
+            recipientLabel: "Aviara Golf Club",
+            recipientNicknames: [],
+            description: nil,
+            isTeamAward: false
+        ),
+        Award(
+            year: 2022,
+            title: "Course of the Year",
+            category: .other,
+            recipientLabel: "PGA West — Mountain Course",
+            recipientNicknames: [],
+            description: nil,
+            isTeamAward: false
+        ),
+        Award(
+            year: 2021,
+            title: "Course of the Year",
+            category: .other,
+            recipientLabel: "Troon North — Pinnacle Course",
+            recipientNicknames: [],
+            description: nil,
+            isTeamAward: false
         )
     ]
 
