@@ -190,8 +190,12 @@ extension Trip {
     }
 
     private static func dateFrom(_ string: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
-        return formatter.date(from: string) ?? Date()
+        let parts = string.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3 else { return Date() }
+        var components = DateComponents()
+        components.year = parts[0]
+        components.month = parts[1]
+        components.day = parts[2]
+        return Calendar.current.date(from: components) ?? Date()
     }
 }

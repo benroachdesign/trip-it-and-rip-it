@@ -95,8 +95,12 @@ enum MockTripEvents {
     }
 
     private static func parseDate(_ s: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
-        return formatter.date(from: s) ?? Date()
+        let parts = s.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3 else { return Date() }
+        var components = DateComponents()
+        components.year = parts[0]
+        components.month = parts[1]
+        components.day = parts[2]
+        return Calendar.current.date(from: components) ?? Date()
     }
 }
