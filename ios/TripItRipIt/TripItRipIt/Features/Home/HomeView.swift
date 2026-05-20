@@ -218,18 +218,38 @@ struct HomeView: View {
     }
 
     private func wrappedSection(trip: Trip) -> some View {
-        NavigationLink(value: trip) {
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                Text("Trip wrapped")
-                    .font(AppFont.sectionHeader)
-                    .foregroundStyle(Color.homeInk)
-                Text("\(trip.locationDisplay) · \(String(trip.year))")
-                    .font(AppFont.footnote)
-                    .foregroundStyle(Color.homeMuted)
-                Text("See the recap →")
-                    .font(AppFont.body(15, weight: .semibold))
+        let awards = MockAwards.awards(forYear: trip.year)
+        let champions = awards.first { $0.category == .championship }
+        let courseOfYear = awards.first { $0.title == "Course of the Year" }
+
+        return NavigationLink(value: trip) {
+            VStack(alignment: .leading, spacing: Spacing.lg) {
+                wrappedMasthead(trip: trip)
+                if champions != nil || courseOfYear != nil {
+                    VStack(spacing: Spacing.sm) {
+                        if let champions {
+                            wrappedRow(
+                                caption: "CHAMPIONS",
+                                title: champions.recipientLabel,
+                                subtitle: champions.recipientNicknames.joined(separator: " · "),
+                                icon: "trophy.fill",
+                                isBrass: true
+                            )
+                        }
+                        if let courseOfYear {
+                            wrappedRow(
+                                caption: "COURSE OF THE YEAR",
+                                title: courseOfYear.recipientLabel,
+                                subtitle: nil,
+                                icon: "rosette",
+                                isBrass: false
+                            )
+                        }
+                    }
+                }
+                Text("See the full recap →")
+                    .font(AppFont.body(14, weight: .semibold))
                     .foregroundStyle(Color.homeAccent)
-                    .padding(.top, Spacing.xs)
             }
             .padding(Spacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -237,11 +257,70 @@ struct HomeView: View {
             .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
             .overlay(
                 RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Color.homeDivider, lineWidth: 1)
+                    .stroke(Color.homeAccent.opacity(0.3), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
         .hapticOnTap(.soft)
+    }
+
+    private func wrappedMasthead(trip: Trip) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("TRIP WRAPPED")
+                .font(AppFont.body(11, weight: .semibold))
+                .tracking(2)
+                .foregroundStyle(Color.homeMuted)
+            Text(String(trip.year))
+                .font(AppFont.display(72, weight: .bold))
+                .foregroundStyle(Color.homeAccent)
+                .monospacedDigit()
+            HStack(spacing: 10) {
+                Rectangle()
+                    .fill(Color.homeMuted.opacity(0.5))
+                    .frame(width: 24, height: 1)
+                Text(trip.locationDisplay.uppercased())
+                    .font(AppFont.caption.weight(.semibold))
+                    .tracking(2)
+                    .foregroundStyle(Color.homeMuted)
+            }
+        }
+    }
+
+    private func wrappedRow(
+        caption: String,
+        title: String,
+        subtitle: String?,
+        icon: String,
+        isBrass: Bool
+    ) -> some View {
+        let tint: Color = isBrass
+            ? Color(red: 0.847, green: 0.776, blue: 0.553)  // brass / homeAccent equiv
+            : Color.homeInk
+
+        return HStack(alignment: .top, spacing: Spacing.md) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 36, height: 36)
+                .background(tint.opacity(0.15))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(caption)
+                    .font(AppFont.body(10, weight: .semibold))
+                    .tracking(1.5)
+                    .foregroundStyle(Color.homeMuted)
+                Text(title)
+                    .font(AppFont.body(16, weight: .semibold))
+                    .foregroundStyle(Color.homeInk)
+                if let subtitle, !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(AppFont.caption)
+                        .foregroundStyle(Color.homeMuted)
+                }
+            }
+            Spacer(minLength: 0)
+        }
     }
 }
 
