@@ -16,10 +16,28 @@ struct BandonMapCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
-            Text("BANDON DUNES RESORT")
-                .font(AppFont.body(11, weight: .semibold))
-                .tracking(2)
-                .foregroundStyle(Color.homeMuted)
+            HStack {
+                Text("BANDON DUNES RESORT")
+                    .font(AppFont.body(11, weight: .semibold))
+                    .tracking(2)
+                    .foregroundStyle(Color.homeMuted)
+                Spacer()
+                if let url = MapsLink.url(for: "Bandon Dunes Resort, Bandon, OR") {
+                    Link(destination: url) {
+                        HStack(spacing: 4) {
+                            Text("OPEN IN MAPS")
+                                .font(AppFont.body(10, weight: .semibold))
+                                .tracking(1.5)
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 9, weight: .semibold))
+                                .accessibilityHidden(true)
+                        }
+                        .foregroundStyle(Color.homeAccent)
+                    }
+                    .hapticOnTap(.soft)
+                    .accessibilityHint("Opens Bandon Dunes Resort in Maps")
+                }
+            }
             Map(position: $position) {
                 Marker("Lily Pond Rooms", systemImage: "house.lodge.fill",
                        coordinate: CLLocationCoordinate2D(latitude: 43.0870, longitude: -124.4108))

@@ -448,22 +448,52 @@ private struct EventRow: View {
 private struct CourseRow: View {
     let name: String
 
+    private var linkedCourse: Course? { Course.find(byName: name) }
+
     var body: some View {
-        HStack {
-            Image(systemName: "flag.fill")
-                .font(.system(size: 14))
-                .foregroundStyle(Color.appAccent.opacity(0.7))
-                .frame(width: 24)
-            Text(name)
-                .font(AppFont.bodyText)
-                .foregroundStyle(Color.appInk)
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(Color.appMuted.opacity(0.5))
+        HStack(spacing: Spacing.md) {
+            thumbnail
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name)
+                    .font(AppFont.bodyText.weight(.semibold))
+                    .foregroundStyle(Color.appInk)
+                    .lineLimit(2)
+                if let course = linkedCourse, let location = course.locationDisplay {
+                    Text(location)
+                        .font(AppFont.caption)
+                        .foregroundStyle(Color.appMuted)
+                }
+            }
+            Spacer(minLength: 0)
+            if linkedCourse != nil {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.appMuted.opacity(0.55))
+                    .accessibilityHidden(true)
+            }
         }
-        .padding(.horizontal, Spacing.lg)
-        .padding(.vertical, Spacing.md)
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.sm)
         .background(Color.appSurface)
+    }
+
+    @ViewBuilder
+    private var thumbnail: some View {
+        if let course = linkedCourse,
+           let assetName = course.photoAssetName,
+           UIImage(named: assetName) != nil {
+            Image(assetName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 44, height: 44)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        } else {
+            Image(systemName: "flag.fill")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.white)
+                .frame(width: 44, height: 44)
+                .background(Color.appAccent)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
     }
 }

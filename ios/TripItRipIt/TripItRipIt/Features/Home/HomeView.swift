@@ -213,6 +213,7 @@ struct HomeView: View {
                 .font(AppFont.body(11, weight: .semibold))
                 .tracking(2)
                 .foregroundStyle(Color.homeMuted)
+                .monospacedDigit()
             Spacer()
         }
     }

@@ -28,6 +28,18 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    EmptyView()
+                } header: {
+                    settingsMasthead
+                        .textCase(nil)
+                        .padding(.horizontal, -16)
+                        .padding(.top, 0)
+                }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+
                 #if DEBUG
                 timeTravelSection
                 #endif
@@ -70,7 +82,7 @@ struct SettingsView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Settings")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -78,6 +90,25 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private var settingsMasthead: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("T&R")
+                .font(AppFont.display(56, weight: .bold))
+                .foregroundStyle(Color.appAccent)
+            HStack(spacing: 10) {
+                Rectangle()
+                    .fill(Color.appMuted.opacity(0.45))
+                    .frame(width: 24, height: 1)
+                Text("SETTINGS")
+                    .font(AppFont.caption.weight(.semibold))
+                    .tracking(2)
+                    .foregroundStyle(Color.appMuted)
+            }
+        }
+        .padding(.bottom, Spacing.md)
+        .padding(.top, Spacing.sm)
     }
 
     private var virtualNowDisplay: String {
