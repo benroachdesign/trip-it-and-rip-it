@@ -100,6 +100,7 @@ private struct TripYearCard: View {
     private var heroSection: some View {
         ZStack(alignment: .bottomLeading) {
             heroImage
+                .filmGrain()
             LinearGradient(
                 stops: [
                     .init(color: .clear, location: 0),

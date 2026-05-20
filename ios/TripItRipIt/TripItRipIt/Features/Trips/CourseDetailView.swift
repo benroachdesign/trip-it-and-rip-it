@@ -26,6 +26,34 @@ struct CourseDetailView: View {
         .background(Color.appBackground)
         .navigationTitle(course.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                shareButton
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shareButton: some View {
+        if let image = renderedShareImage() {
+            ShareLink(
+                item: image,
+                preview: SharePreview(course.name, image: image)
+            ) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .accessibilityLabel("Share course")
+            .hapticOnTap(.soft)
+        }
+    }
+
+    @MainActor
+    private func renderedShareImage() -> Image? {
+        let renderer = ImageRenderer(content: CourseShareCard(course: course))
+        renderer.scale = 2.0
+        guard let ui = renderer.uiImage else { return nil }
+        return Image(uiImage: ui)
     }
 
     private var heroSection: some View {
@@ -50,6 +78,7 @@ struct CourseDetailView: View {
         .frame(maxWidth: .infinity)
         .frame(height: 220)
         .clipped()
+        .filmGrain()
     }
 
     private var placeholderHero: some View {
@@ -70,10 +99,7 @@ struct CourseDetailView: View {
                 .font(AppFont.title)
                 .foregroundStyle(Color.appInk)
             if let location = course.locationDisplay {
-                Text(location.uppercased())
-                    .font(AppFont.caption.weight(.semibold))
-                    .tracking(1.5)
-                    .foregroundStyle(Color.appMuted)
+                locationLink(location: location)
             }
             HStack(spacing: Spacing.lg) {
                 if let architect = course.architect {
@@ -86,6 +112,29 @@ struct CourseDetailView: View {
             .padding(.top, Spacing.xs)
         }
         .padding(.horizontal, Spacing.lg)
+    }
+
+    @ViewBuilder
+    private func locationLink(location: String) -> some View {
+        let label = HStack(spacing: 6) {
+            Text(location.uppercased())
+                .font(AppFont.caption.weight(.semibold))
+                .tracking(1.5)
+            Image(systemName: "arrow.up.right")
+                .font(.system(size: 9, weight: .semibold))
+                .accessibilityHidden(true)
+        }
+        .foregroundStyle(Color.appMuted)
+
+        let query = "\(course.name) \(location)"
+        if let url = MapsLink.url(for: query) {
+            Link(destination: url) { label }
+                .buttonStyle(.plain)
+                .hapticOnTap(.soft)
+                .accessibilityHint("Opens in Maps")
+        } else {
+            label
+        }
     }
 
     private func metaPill(label: String, value: String) -> some View {

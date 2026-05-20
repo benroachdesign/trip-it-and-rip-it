@@ -44,6 +44,7 @@ struct TripDetailView: View {
                 heroBackground
                     .frame(height: 240)
                     .clipped()
+                    .filmGrain()
                 LinearGradient(
                     stops: [
                         .init(color: .clear, location: 0),
@@ -55,16 +56,21 @@ struct TripDetailView: View {
                 .frame(height: 240)
                 .allowsHitTesting(false)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(String(trip.year))
                         .font(AppFont.display(80, weight: .bold))
                         .foregroundStyle(.white)
                         .monospacedDigit()
                         .shadow(color: .black.opacity(0.35), radius: 8, y: 2)
-                    Text(trip.locationDisplay.uppercased())
-                        .font(AppFont.caption.weight(.semibold))
-                        .tracking(2)
-                        .foregroundStyle(.white.opacity(0.92))
+                    HStack(spacing: 10) {
+                        Rectangle()
+                            .fill(Color.white.opacity(0.55))
+                            .frame(width: 32, height: 1)
+                        Text(trip.locationDisplay.uppercased())
+                            .font(AppFont.caption.weight(.semibold))
+                            .tracking(2)
+                            .foregroundStyle(.white.opacity(0.92))
+                    }
                 }
                 .padding(.horizontal, Spacing.lg)
                 .padding(.bottom, Spacing.lg)
@@ -196,26 +202,48 @@ struct TripDetailView: View {
         if let detail, let address = detail.lodgingAddress {
             VStack(alignment: .leading, spacing: Spacing.md) {
                 SectionLabel(text: "Lodging")
-                VStack(alignment: .leading, spacing: Spacing.xs) {
-                    if let label = detail.lodgingLabel {
-                        Text(label)
-                            .font(AppFont.headline)
-                            .foregroundStyle(Color.appInk)
-                    }
-                    Text(address)
-                        .font(AppFont.footnote)
-                        .foregroundStyle(Color.appMuted)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(Spacing.lg)
-                .background(Color.appSurface)
-                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-                .overlay(
-                    RoundedRectangle(cornerRadius: Radius.lg)
-                        .stroke(Color.appDivider, lineWidth: 1)
-                )
-                .padding(.horizontal, Spacing.lg)
+                lodgingCard(label: detail.lodgingLabel, address: address)
+                    .padding(.horizontal, Spacing.lg)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func lodgingCard(label: String?, address: String) -> some View {
+        let card = HStack(alignment: .top, spacing: Spacing.md) {
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                if let label {
+                    Text(label)
+                        .font(AppFont.headline)
+                        .foregroundStyle(Color.appInk)
+                }
+                Text(address)
+                    .font(AppFont.footnote)
+                    .foregroundStyle(Color.appMuted)
+                    .multilineTextAlignment(.leading)
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "arrow.up.right.square")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.appMuted)
+                .accessibilityHidden(true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.lg)
+        .background(Color.appSurface)
+        .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+        .overlay(
+            RoundedRectangle(cornerRadius: Radius.lg)
+                .stroke(Color.appDivider, lineWidth: 1)
+        )
+
+        if let url = MapsLink.url(for: address) {
+            Link(destination: url) { card }
+                .buttonStyle(.plain)
+                .hapticOnTap(.soft)
+                .accessibilityHint("Opens in Maps")
+        } else {
+            card
         }
     }
 }
@@ -224,11 +252,16 @@ private struct SectionLabel: View {
     let text: String
 
     var body: some View {
-        Text(text.uppercased())
-            .font(AppFont.caption.weight(.semibold))
-            .tracking(1.5)
-            .foregroundStyle(Color.appMuted)
-            .padding(.horizontal, Spacing.lg)
+        HStack(spacing: 10) {
+            Text(text.uppercased())
+                .font(AppFont.caption.weight(.semibold))
+                .tracking(1.5)
+                .foregroundStyle(Color.appMuted)
+            Rectangle()
+                .fill(Color.appDivider)
+                .frame(height: 1)
+        }
+        .padding(.horizontal, Spacing.lg)
     }
 }
 
