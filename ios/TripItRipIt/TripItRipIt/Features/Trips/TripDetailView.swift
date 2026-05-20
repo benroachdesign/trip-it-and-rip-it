@@ -4,6 +4,9 @@ import UIKit
 struct TripDetailView: View {
     let trip: Trip
 
+    @State private var yearTapCount = 0
+    @State private var showLore = false
+
     private var heroCourse: Course? {
         Trip.mockHeroCourse(for: trip.id)
     }
@@ -36,6 +39,9 @@ struct TripDetailView: View {
         .background(Color.appBackground)
         .navigationTitle(String(trip.year))
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showLore) {
+            TripLoreView(trip: trip)
+        }
     }
 
     private var heroSection: some View {
@@ -62,6 +68,14 @@ struct TripDetailView: View {
                         .foregroundStyle(.white)
                         .monospacedDigit()
                         .shadow(color: .black.opacity(0.35), radius: 8, y: 2)
+                        .onTapGesture {
+                            yearTapCount += 1
+                            if yearTapCount >= 5 {
+                                yearTapCount = 0
+                                Haptics.tap(.medium)
+                                showLore = true
+                            }
+                        }
                     HStack(spacing: 10) {
                         Rectangle()
                             .fill(Color.white.opacity(0.55))

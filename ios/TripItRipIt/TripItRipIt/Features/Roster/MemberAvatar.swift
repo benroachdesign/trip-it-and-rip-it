@@ -32,6 +32,18 @@ struct MemberAvatar: View {
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(member.fullName) avatar")
+        .contextMenu(menuItems: {
+            if let song = member.card?.walkUpSong,
+               let url = AppleMusicLink.search(for: song) {
+                Link(destination: url) {
+                    Label("Search in Music", systemImage: "music.note")
+                }
+            }
+        }, preview: {
+            if let song = member.card?.walkUpSong {
+                WalkUpSongPreview(member: member, song: song)
+            }
+        })
     }
 
     private var initial: String {
