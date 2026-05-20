@@ -253,13 +253,7 @@ struct CourseDetailView: View {
                 SectionLabel(text: "Played in")
                 HStack(spacing: Spacing.sm) {
                     ForEach(yearsPlayed, id: \.self) { year in
-                        Text(String(year))
-                            .font(AppFont.numeric(15, weight: .semibold))
-                            .foregroundStyle(Color.appAccent)
-                            .padding(.horizontal, Spacing.md)
-                            .padding(.vertical, Spacing.xs)
-                            .background(Color.appAccent.opacity(0.12))
-                            .clipShape(Capsule())
+                        yearBadge(year: year)
                     }
                 }
                 .padding(.horizontal, Spacing.lg)
@@ -267,6 +261,25 @@ struct CourseDetailView: View {
         }
     }
 
+    @ViewBuilder
+    private func yearBadge(year: Int) -> some View {
+        let label = Text(String(year))
+            .font(AppFont.numeric(15, weight: .semibold))
+            .foregroundStyle(Color.appAccent)
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.xs)
+            .background(Color.appAccent.opacity(0.12))
+            .clipShape(Capsule())
+
+        if let trip = Trip.mockTrips.first(where: { $0.year == year }) {
+            NavigationLink(value: trip) { label }
+                .buttonStyle(.plain)
+                .hapticOnTap(.soft)
+                .accessibilityLabel("Trip \(year)")
+        } else {
+            label
+        }
+    }
 }
 
 private struct SignatureHoleRow: View {

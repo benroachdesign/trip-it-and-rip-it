@@ -18,6 +18,15 @@ struct TrophiesView: View {
         .background(Color.appBackground)
         .navigationTitle("Trophies")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Course.self) { course in
+            CourseDetailView(course: course)
+        }
+        .navigationDestination(for: Trip.self) { trip in
+            TripDetailView(trip: trip)
+        }
+        .navigationDestination(for: Member.self) { member in
+            MemberProfileView(member: member)
+        }
     }
 
     private var hero: some View {
@@ -131,7 +140,26 @@ private struct YearShelf: View {
 private struct TrophyItem: View {
     let award: Award
 
+    /// Course-recipient awards (Course of the Year, Worst Course) have an
+    /// empty nickname list and a recipientLabel that matches a Course name.
+    private var linkedCourse: Course? {
+        guard !award.isTeamAward, award.recipientNicknames.isEmpty else { return nil }
+        return Course.find(byName: award.recipientLabel)
+    }
+
     var body: some View {
+        if let course = linkedCourse {
+            NavigationLink(value: course) {
+                rowContent(showsChevron: true)
+            }
+            .buttonStyle(.plain)
+            .hapticOnTap(.soft)
+        } else {
+            rowContent(showsChevron: false)
+        }
+    }
+
+    private func rowContent(showsChevron: Bool) -> some View {
         HStack(alignment: .top, spacing: Spacing.md) {
             iconView
             VStack(alignment: .leading, spacing: 4) {
@@ -164,6 +192,12 @@ private struct TrophyItem: View {
                 }
             }
             Spacer(minLength: 0)
+            if showsChevron {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.appMuted.opacity(0.6))
+                    .accessibilityHidden(true)
+            }
         }
     }
 

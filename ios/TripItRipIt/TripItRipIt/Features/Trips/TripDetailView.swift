@@ -137,7 +137,11 @@ struct TripDetailView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: Spacing.md) {
                     ForEach(attendees) { member in
-                        AttendeeAvatar(member: member)
+                        NavigationLink(value: member) {
+                            AttendeeAvatar(member: member)
+                        }
+                        .buttonStyle(.plain)
+                        .hapticOnTap(.soft)
                     }
                 }
                 .padding(.horizontal, Spacing.lg)

@@ -111,6 +111,9 @@ struct HomeView: View {
         .navigationDestination(for: Course.self) { course in
             CourseDetailView(course: course)
         }
+        .navigationDestination(for: Member.self) { member in
+            MemberProfileView(member: member)
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

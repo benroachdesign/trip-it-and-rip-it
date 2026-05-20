@@ -43,6 +43,9 @@ struct TripsView: View {
                 .navigationDestination(for: Course.self) { course in
                     CourseDetailView(course: course)
                 }
+                .navigationDestination(for: Member.self) { member in
+                    MemberProfileView(member: member)
+                }
             }
         }
         .background(Color.appBackground)

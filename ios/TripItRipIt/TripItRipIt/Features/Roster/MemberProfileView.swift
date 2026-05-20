@@ -9,6 +9,7 @@ struct MemberProfileView: View {
                 hero
                 statsRow
                 bioSection
+                trophyCaseSection
                 tripsSection
             }
             .padding(.bottom, Spacing.xl)
@@ -16,6 +17,9 @@ struct MemberProfileView: View {
         .background(Color.appBackground)
         .navigationTitle(member.fullName)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Trip.self) { trip in
+            TripDetailView(trip: trip)
+        }
     }
 
     private var hero: some View {
@@ -121,6 +125,79 @@ struct MemberProfileView: View {
     }
 
     @ViewBuilder
+    private var trophyCaseSection: some View {
+        let awards = member.memberAwards
+        if !awards.isEmpty {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                sectionLabel("Trophy case")
+                VStack(spacing: Spacing.sm) {
+                    ForEach(awards) { award in
+                        trophyRow(award: award)
+                    }
+                }
+                .padding(.horizontal, Spacing.lg)
+            }
+        }
+    }
+
+    private func trophyRow(award: Award) -> some View {
+        HStack(spacing: Spacing.md) {
+            Image(systemName: trophyIcon(for: award))
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(trophyIconColor(for: award))
+                .frame(width: 36, height: 36)
+                .background(trophyIconColor(for: award).opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(award.title)
+                        .font(AppFont.body(15, weight: .semibold))
+                        .foregroundStyle(Color.appInk)
+                    if award.isTeamAward {
+                        Text("TEAM")
+                            .font(AppFont.body(9, weight: .bold))
+                            .tracking(0.6)
+                            .foregroundStyle(Color.appAccent)
+                            .padding(.horizontal, 5).padding(.vertical, 1.5)
+                            .background(Color.appAccent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                }
+                Text(String(award.year))
+                    .font(AppFont.caption)
+                    .foregroundStyle(Color.appMuted)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.sm)
+        .background(Color.appSurface)
+        .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: Radius.md)
+                .stroke(Color.appDivider, lineWidth: 1)
+        )
+    }
+
+    private func trophyIcon(for award: Award) -> String {
+        switch award.category {
+        case .championship: return "trophy.fill"
+        case .scoring:      return "target"
+        case .mishap:       return "exclamationmark.bubble.fill"
+        case .behavior:     return "sparkles"
+        case .tradition:    return "flag.checkered"
+        case .other:        return "rosette"
+        }
+    }
+
+    private func trophyIconColor(for award: Award) -> Color {
+        switch award.category {
+        case .championship: return Color(red: 0.72, green: 0.55, blue: 0.18)
+        default:            return Color.appAccent
+        }
+    }
+
+    @ViewBuilder
     private var tripsSection: some View {
         let years = member.attendedTripYears
         if !years.isEmpty {
@@ -128,17 +205,31 @@ struct MemberProfileView: View {
                 sectionLabel("Trips attended")
                 HStack(spacing: Spacing.sm) {
                     ForEach(years, id: \.self) { year in
-                        Text(String(year))
-                            .font(AppFont.numeric(15, weight: .semibold))
-                            .foregroundStyle(Color.appAccent)
-                            .padding(.horizontal, Spacing.md)
-                            .padding(.vertical, Spacing.xs)
-                            .background(Color.appAccent.opacity(0.12))
-                            .clipShape(Capsule())
+                        tripYearBadge(year: year)
                     }
                 }
                 .padding(.horizontal, Spacing.lg)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func tripYearBadge(year: Int) -> some View {
+        let label = Text(String(year))
+            .font(AppFont.numeric(15, weight: .semibold))
+            .foregroundStyle(Color.appAccent)
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.xs)
+            .background(Color.appAccent.opacity(0.12))
+            .clipShape(Capsule())
+
+        if let trip = Trip.mockTrips.first(where: { $0.year == year }) {
+            NavigationLink(value: trip) { label }
+                .buttonStyle(.plain)
+                .hapticOnTap(.soft)
+                .accessibilityLabel("Trip \(year)")
+        } else {
+            label
         }
     }
 

@@ -127,4 +127,13 @@ extension Member {
             .map { $0.trip.year }
             .sorted()
     }
+
+    /// All awards where this member is a recipient — solo or as part of a
+    /// team. Sorted newest-first for display in the profile trophy case.
+    var memberAwards: [Award] {
+        guard let nickname else { return [] }
+        return MockAwards.all
+            .filter { $0.recipientNicknames.contains(nickname) }
+            .sorted { $0.year > $1.year }
+    }
 }
