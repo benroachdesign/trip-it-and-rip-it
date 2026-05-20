@@ -64,11 +64,38 @@ enum MockAwards {
         ),
         Award(
             year: 2024,
+            title: "Champions",
+            category: .championship,
+            recipientLabel: "Newbs",
+            recipientNicknames: ["Webb", "Lutz", "Derek", "Tommer"],
+            description: nil,
+            isTeamAward: true
+        ),
+        Award(
+            year: 2024,
             title: "70s Score",
             category: .scoring,
             recipientLabel: "Roach",
             recipientNicknames: ["Roach"],
             description: "Shot a 79",
+            isTeamAward: false
+        ),
+        Award(
+            year: 2023,
+            title: "Champions",
+            category: .championship,
+            recipientLabel: "OGs",
+            recipientNicknames: ["Roach", "Strub", "Braden", "Mader"],
+            description: nil,
+            isTeamAward: true
+        ),
+        Award(
+            year: 2023,
+            title: "Worst Course",
+            category: .other,
+            recipientLabel: "Torrey Pines South",
+            recipientNicknames: [],
+            description: nil,
             isTeamAward: false
         ),
         Award(
