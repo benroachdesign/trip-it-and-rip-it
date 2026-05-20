@@ -22,6 +22,7 @@ enum AppEnvironment {
     #endif
 
     static var now: Date {
-        overrideDate ?? Date()
+        if let override = overrideDate { return override }
+        return TimeTravel.now
     }
 }

@@ -26,6 +26,7 @@ struct TrophiesView: View {
                 Image(systemName: "trophy.fill")
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(Color.appAccent)
+                    .accessibilityHidden(true)
                 Text("Trophy Room")
                     .font(AppFont.largeTitle)
                     .foregroundStyle(Color.appInk)

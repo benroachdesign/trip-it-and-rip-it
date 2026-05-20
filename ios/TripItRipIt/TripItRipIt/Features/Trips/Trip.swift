@@ -1,6 +1,6 @@
 import Foundation
 
-struct Trip: Identifiable, Decodable, Hashable {
+struct Trip: Identifiable, Codable, Hashable {
     let id: UUID
     let year: Int
     let tripTitle: String?

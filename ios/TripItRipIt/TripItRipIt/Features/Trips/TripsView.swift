@@ -29,11 +29,13 @@ struct TripsView: View {
                                 )
                             }
                             .buttonStyle(.plain)
+                            .hapticOnTap(.soft)
                         }
                     }
                     .padding(.horizontal, Spacing.lg)
                     .padding(.vertical, Spacing.md)
                 }
+                .refreshable { await load() }
                 .background(Color.appBackground)
                 .navigationDestination(for: Trip.self) { trip in
                     TripDetailView(trip: trip)
@@ -54,15 +56,23 @@ struct TripsView: View {
             trips = Trip.mockTrips
             return
         }
+        if trips.isEmpty, let cached = LocalCache.load([Trip].self, forKey: CacheKey.trips) {
+            trips = cached
+        }
         do {
-            trips = try await SupabaseService.client
+            let fresh: [Trip] = try await SupabaseService.client
                 .from("trips")
                 .select("id, year, trip_title, location_city, location_state, start_date, end_date, winning_team_id, hero_photo_url, blurb")
                 .order("year", ascending: false)
                 .execute()
                 .value
+            trips = fresh
+            LocalCache.save(fresh, forKey: CacheKey.trips)
+            loadError = nil
         } catch {
-            loadError = error.localizedDescription
+            if trips.isEmpty {
+                loadError = error.localizedDescription
+            }
         }
     }
 }

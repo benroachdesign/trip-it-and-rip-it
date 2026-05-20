@@ -2,8 +2,13 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(AuthViewModel.self) private var auth
+    @State private var showSettings = false
+    @State private var showTripStartTakeover = false
 
-    private let now = AppEnvironment.now
+    // Triggers a re-render whenever the time-travel override changes.
+    @AppStorage("timeTravel.anchorVirtual") private var ttAnchor: Double = 0
+
+    private var now: Date { AppEnvironment.now }
 
     /// Treated as the "currently signed-in user" for mock/dev. Roach for now;
     /// will come from the auth session when sign-in is wired up live.
@@ -78,7 +83,17 @@ struct HomeView: View {
                 .padding(.horizontal, Spacing.lg)
                 .padding(.bottom, Spacing.xl)
             }
+
+            if showTripStartTakeover {
+                TripStartTakeover {
+                    withAnimation(AppMotion.soft) {
+                        showTripStartTakeover = false
+                    }
+                }
+                .zIndex(10)
+            }
         }
+        .onAppear { evaluateTripStartTakeover() }
         .toolbarBackground(Color.homeBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
@@ -92,18 +107,19 @@ struct HomeView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button(role: .destructive) {
-                        Task { await auth.signOut() }
-                    } label: {
-                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
-                    }
+                Button {
+                    Haptics.tap(.soft)
+                    showSettings = true
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.homeMuted)
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.homeInk)
                 }
+                .accessibilityLabel("Settings")
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
 
@@ -117,6 +133,15 @@ struct HomeView: View {
                 .foregroundStyle(Color.homeInk)
         }
         .padding(.top, Spacing.lg)
+    }
+
+    private func evaluateTripStartTakeover() {
+        guard case .during(let trip) = tripState else { return }
+        if TripStartTakeoverFlag.hasBeenShown(forYear: trip.year) { return }
+        TripStartTakeoverFlag.markShown(forYear: trip.year)
+        withAnimation(AppMotion.soft) {
+            showTripStartTakeover = true
+        }
     }
 
     private var timeOfDay: String {
@@ -207,6 +232,7 @@ struct HomeView: View {
             )
         }
         .buttonStyle(.plain)
+        .hapticOnTap(.soft)
     }
 }
 
@@ -229,6 +255,8 @@ private struct CountdownCard: View {
                         .font(AppFont.display(140, weight: .bold))
                         .foregroundStyle(Color.homeAccent)
                         .monospacedDigit()
+                        .contentTransition(.numericText(value: Double(days)))
+                        .animation(AppMotion.soft, value: days)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     Text("DAYS UNTIL \(trip.locationCity.uppercased())")
@@ -252,6 +280,7 @@ private struct CountdownCard: View {
             )
         }
         .buttonStyle(.plain)
+        .hapticOnTap(.soft)
     }
 }
 

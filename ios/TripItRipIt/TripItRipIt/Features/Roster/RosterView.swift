@@ -21,8 +21,10 @@ struct RosterView: View {
                         MemberRow(member: member)
                     }
                     .listRowInsets(EdgeInsets(top: Spacing.sm, leading: Spacing.lg, bottom: Spacing.sm, trailing: Spacing.lg))
+                    .hapticOnTap(.soft)
                 }
                 .listStyle(.plain)
+                .refreshable { await load() }
             }
         }
         .background(Color.appBackground)
@@ -39,20 +41,28 @@ struct RosterView: View {
             members = Member.mockRoster
             return
         }
+        if members.isEmpty, let cached = LocalCache.load([Member].self, forKey: CacheKey.members) {
+            members = cached
+        }
         do {
-            members = try await SupabaseService.client
+            let fresh: [Member] = try await SupabaseService.client
                 .from("members")
                 .select("id, full_name, nickname, sort_order, is_guest, is_og, home_city, handicap, fun_fact, bio")
                 .order("sort_order")
                 .execute()
                 .value
+            members = fresh
+            LocalCache.save(fresh, forKey: CacheKey.members)
+            loadError = nil
         } catch {
-            loadError = error.localizedDescription
+            if members.isEmpty {
+                loadError = error.localizedDescription
+            }
         }
     }
 }
 
-struct Member: Identifiable, Decodable, Hashable {
+struct Member: Identifiable, Codable, Hashable {
     let id: UUID
     let fullName: String
     let nickname: String?

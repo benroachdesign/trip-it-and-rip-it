@@ -30,6 +30,8 @@ struct MemberAvatar: View {
         .overlay(
             Circle().stroke(Color.appDivider, lineWidth: hasImage ? 0 : 0.5)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(member.fullName) avatar")
     }
 
     private var initial: String {
