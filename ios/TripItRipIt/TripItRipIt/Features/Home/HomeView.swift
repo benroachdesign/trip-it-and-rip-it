@@ -62,7 +62,11 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ZStack {
+        // Read ttAnchor so SwiftUI tracks the dependency and re-renders
+        // when the time-travel preset changes from another view.
+        _ = ttAnchor
+
+        return ZStack {
             Color.homeBackground.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.xl) {
@@ -94,6 +98,7 @@ struct HomeView: View {
             }
         }
         .onAppear { evaluateTripStartTakeover() }
+        .onChange(of: ttAnchor) { evaluateTripStartTakeover() }
         .toolbarBackground(Color.homeBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
