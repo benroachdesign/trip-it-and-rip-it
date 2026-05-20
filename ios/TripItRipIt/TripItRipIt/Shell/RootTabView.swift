@@ -1,40 +1,49 @@
 import SwiftUI
+import UIKit
 
 struct RootTabView: View {
-    enum Tab: Hashable { case home, trips, roster, trophies }
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(Color.appInk)
+        appearance.shadowColor = .clear
 
-    @State private var selection: Tab = .home
+        let inactive = UIColor(white: 1, alpha: 0.55)
+        let active = UIColor.white
+
+        appearance.stackedLayoutAppearance.normal.iconColor = inactive
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: inactive]
+        appearance.stackedLayoutAppearance.selected.iconColor = active
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: active]
+
+        appearance.inlineLayoutAppearance.normal.iconColor = inactive
+        appearance.inlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: inactive]
+        appearance.inlineLayoutAppearance.selected.iconColor = active
+        appearance.inlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: active]
+
+        appearance.compactInlineLayoutAppearance.normal.iconColor = inactive
+        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: inactive]
+        appearance.compactInlineLayoutAppearance.selected.iconColor = active
+        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: active]
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
 
     var body: some View {
-        TabView(selection: $selection) {
+        TabView {
             NavigationStack { HomeView() }
-                .tag(Tab.home)
                 .tabItem { Label("Home", systemImage: "house.lodge.fill") }
-                .toolbarBackground(Color.appInk, for: .tabBar)
-                .toolbarBackground(.visible, for: .tabBar)
-                .toolbarColorScheme(.dark, for: .tabBar)
 
             NavigationStack { TripsView() }
-                .tag(Tab.trips)
                 .tabItem { Label("Trips", systemImage: "calendar") }
-                .toolbarBackground(Color.appBackground, for: .tabBar)
-                .toolbarBackground(.visible, for: .tabBar)
-                .toolbarColorScheme(.light, for: .tabBar)
 
             NavigationStack { RosterView() }
-                .tag(Tab.roster)
                 .tabItem { Label("Roster", systemImage: "person.2.fill") }
-                .toolbarBackground(Color.appBackground, for: .tabBar)
-                .toolbarBackground(.visible, for: .tabBar)
-                .toolbarColorScheme(.light, for: .tabBar)
 
             NavigationStack { TrophiesView() }
-                .tag(Tab.trophies)
                 .tabItem { Label("Trophies", systemImage: "trophy.fill") }
-                .toolbarBackground(Color.appBackground, for: .tabBar)
-                .toolbarBackground(.visible, for: .tabBar)
-                .toolbarColorScheme(.light, for: .tabBar)
         }
-        .tint(selection == .home ? .white : Color.appInk)
+        .tint(.white)
     }
 }
