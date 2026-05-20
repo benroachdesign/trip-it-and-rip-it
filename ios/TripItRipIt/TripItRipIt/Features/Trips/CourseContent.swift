@@ -146,6 +146,96 @@ extension Course {
                 "Walking only. Push carts allowed."
             ],
             scorecard: Scorecard(holes: 19, par: 54, totalYardage: 1875, tee: "Shorty")
+        ),
+
+        "Sand Hollow Resort — Championship Course": CourseContent(
+            signatureHoles: [
+                SignatureHole(number: 11, title: nil,
+                              note: "Par 3 across a canyon to a clifftop green. The shot you remember from Sand Hollow."),
+                SignatureHole(number: 14, title: nil,
+                              note: "Par 4 hugging the edge of the red rock cliff. Wide bailout left, certain doom right."),
+                SignatureHole(number: 15, title: nil,
+                              note: "Short par 3 over the box canyon. Wedge in your hands, vertigo in your stomach.")
+            ],
+            thingsToKnow: [
+                "John Fought's red-rock masterpiece in southern Utah. Routinely on Golfweek's top-100 public list.",
+                "Cliff carries on the front side of the back nine — bring extra balls.",
+                "Weather turns fast out here. In 2025 the group got chased off the course mid-round by a thunderstorm; a course worker eventually came out and pulled the plug.",
+                "Heads up around the clubhouse: an old man came tearing up the stairs in a cart and nearly took Roach out."
+            ],
+            scorecard: Scorecard(holes: 18, par: 72, totalYardage: 7197, tee: "Black")
+        ),
+
+        "Green Spring": CourseContent(
+            signatureHoles: [
+                SignatureHole(number: 6, title: nil,
+                              note: "Par 5 with the tee perched above a desert wash. Carry it, then it's a wedge to scoring distance."),
+                SignatureHole(number: 12, title: nil,
+                              note: "Downhill par 4 with the green tucked into the canyon below.")
+            ],
+            thingsToKnow: [
+                "The local favorite — Washington City's value play, often the warmup round of a St. George trip.",
+                "Real canyon shots without the resort price tag.",
+                "Walks well; cart not required.",
+                "Doesn't try to be a bucket-list course — and it's better for it."
+            ],
+            scorecard: Scorecard(holes: 18, par: 71, totalYardage: 6027, tee: "Blue")
+        ),
+
+        "Wolf Creek Golf Club": CourseContent(
+            signatureHoles: [
+                SignatureHole(number: 7, title: nil,
+                              note: "Par 3 with a 100+ foot elevation drop. You can see the green from the tee, but the math feels impossible."),
+                SignatureHole(number: 12, title: nil,
+                              note: "Par 4 with a fairway that wraps a ravine. Cut the corner or play safe — there's no in-between."),
+                SignatureHole(number: 17, title: nil,
+                              note: "Uphill par 4, blind approach. Most-photographed hole on the property.")
+            ],
+            thingsToKnow: [
+                "Sits in Mesquite NV, about 45 minutes from St. George. The group's verdict from 2025: stole the show — felt like playing inside a video game.",
+                "Cart path only, always. Don't even think about it.",
+                "Elevation changes are unlike anything else in the region. Bring your full bag and trust nothing on yardage.",
+                "Greg Norman's Grille on-site for the turn lunch."
+            ],
+            scorecard: Scorecard(holes: 18, par: 72, totalYardage: 6939, tee: "Wolf")
+        ),
+
+        "Coral Canyon": CourseContent(
+            signatureHoles: [
+                SignatureHole(number: 7, title: nil,
+                              note: "Par 3 over a desert wash with the Pine Valley Mountains stacked behind the green."),
+                SignatureHole(number: 13, title: nil,
+                              note: "Par 4 dogleg with a long-iron approach to a perched green."),
+                SignatureHole(number: 18, title: nil,
+                              note: "Reachable par 5 finishing in front of the clubhouse.")
+            ],
+            thingsToKnow: [
+                "Keith Foster design built around natural arroyos and red rock formations. Views toward Zion on a clear day.",
+                "The group teed off in 2025 with a rainbow stretched across the mountains right after the morning rain cleared.",
+                "Less canyon carry than Sand Hollow, more scenic ribbon-of-fairway through the desert.",
+                "Plays cooler than the resort courses — usually 5-8° below St. George proper because of elevation."
+            ],
+            scorecard: Scorecard(holes: 18, par: 72, totalYardage: 6592, tee: "Black")
+        ),
+
+        "Black Desert Resort": CourseContent(
+            signatureHoles: [
+                SignatureHole(number: 9, title: nil,
+                              note: "Par 4 finishing in front of the clubhouse with the basalt fields spread out behind the green."),
+                SignatureHole(number: 17, title: nil,
+                              note: "Par 3 over a lava field. Beautiful when you stick it; disaster when you don't."),
+                SignatureHole(number: 14, title: nil,
+                              note: "Dogleg par 5 carved through volcanic rock — the most distinctive hole on the course.")
+            ],
+            thingsToKnow: [
+                "Tom Weiskopf's last design (2023). Built on a black lava flow in Ivins, UT.",
+                "Now home to the Black Desert Championship on the PGA Tour. The group played here in 2025 weeks before the event — par-3 tees were closed to protect the tournament setup, so we hit off mats.",
+                "Greens were as fast as anything the group has played.",
+                "Lutz hit some absurd recoveries off the lava — a few of his shots from this round are still talked about.",
+                "All-you-can-eat-and-drink during the round is included. Worth the green fee on its own.",
+                "Skip the post-round 20th Hole restaurant — service collapsed when our group rolled in."
+            ],
+            scorecard: Scorecard(holes: 18, par: 71, totalYardage: 7371, tee: "Tournament")
         )
     ]
 }

@@ -47,6 +47,7 @@ struct CourseDetailView: View {
                 placeholderHero
             }
         }
+        .frame(maxWidth: .infinity)
         .frame(height: 220)
         .clipped()
     }
