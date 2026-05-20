@@ -6,11 +6,13 @@ struct TripItRipItApp: App {
     @State private var auth = AuthViewModel()
 
     init() {
-        // Make the tab bar opaque so its icons stay crisp against the dark
-        // green Home background. Default behaviour is translucent and the
-        // icons disappear against the deep fairway color.
+        // Tab bar uses a fully opaque system background so the icons don't
+        // disappear when sitting on top of the Home tab's dark green canvas
+        // (default translucent material let the green bleed through and the
+        // selected accent-green icon vanished).
         let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor.systemBackground
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
     }

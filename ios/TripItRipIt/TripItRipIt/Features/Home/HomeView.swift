@@ -5,8 +5,15 @@ struct HomeView: View {
 
     private let now = AppEnvironment.now
 
-    private var greetingNickname: String {
-        Member.allMockMembers.first(where: { $0.nickname == "Roach" })?.nickname ?? "friend"
+    /// Treated as the "currently signed-in user" for mock/dev. Roach for now;
+    /// will come from the auth session when sign-in is wired up live.
+    private var currentMember: Member? {
+        Member.allMockMembers.first { $0.nickname == "Roach" }
+    }
+
+    private var greetingFirstName: String {
+        guard let fullName = currentMember?.fullName else { return "friend" }
+        return fullName.split(separator: " ").first.map(String.init) ?? fullName
     }
 
     private var nextTrip: Trip? {
@@ -105,7 +112,7 @@ struct HomeView: View {
             Text("Good \(timeOfDay)")
                 .font(AppFont.footnote)
                 .foregroundStyle(Color.homeMuted)
-            Text(greetingNickname)
+            Text(greetingFirstName)
                 .font(AppFont.display(34, weight: .bold))
                 .foregroundStyle(Color.homeInk)
         }
@@ -122,16 +129,14 @@ struct HomeView: View {
     }
 
     private func upcomingSection(trip: Trip, days: Int) -> some View {
-        let currentMember = Member.allMockMembers.first { $0.nickname == greetingNickname }
-
-        return VStack(spacing: Spacing.lg) {
+        VStack(spacing: Spacing.lg) {
             CountdownCard(trip: trip, days: days)
+            FirstUpCard(trip: trip)
+            BandonMapCard()
             if let member = currentMember,
                LodgingAssignment.bandon2026(for: member.nickname) != nil {
                 LodgingCard(member: member)
             }
-            BandonMapCard()
-            FirstUpCard(trip: trip)
         }
     }
 
