@@ -60,8 +60,11 @@ struct OnboardingView: View {
                     .tracking(2)
                     .foregroundStyle(Color.appMuted)
                 Text("Bandon Dunes")
-                    .font(AppFont.display(48, weight: .bold))
+                    .font(AppFont.display(42, weight: .bold))
                     .foregroundStyle(Color.appInk)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: 10) {
                     Rectangle()
                         .fill(Color.appMuted.opacity(0.45))
