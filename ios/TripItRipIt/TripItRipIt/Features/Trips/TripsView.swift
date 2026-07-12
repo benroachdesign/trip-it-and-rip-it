@@ -23,9 +23,9 @@ struct TripsView: View {
                             NavigationLink(value: trip) {
                                 TripYearCard(
                                     trip: trip,
-                                    featuredCourseName: Trip.mockFeaturedCourse(for: trip.id),
-                                    heroCourse: Trip.mockHeroCourse(for: trip.id),
-                                    courseNames: Trip.mockCourseNames(for: trip.id)
+                                    featuredCourseName: Trip.mockFeaturedCourse(forYear: trip.year),
+                                    heroCourse: Trip.mockHeroCourse(forYear: trip.year),
+                                    courseNames: Trip.mockCourseNames(forYear: trip.year)
                                 )
                             }
                             .buttonStyle(.plain)
