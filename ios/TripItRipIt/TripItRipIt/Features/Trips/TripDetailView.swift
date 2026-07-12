@@ -8,15 +8,15 @@ struct TripDetailView: View {
     @State private var showLore = false
 
     private var heroCourse: Course? {
-        Trip.mockHeroCourse(for: trip.id)
+        Trip.mockHeroCourse(forYear: trip.year)
     }
 
     private var attendees: [Member] {
-        Trip.mockAttendees(for: trip.id)
+        Trip.mockAttendees(forYear: trip.year)
     }
 
     private var detail: MockTripDetail? {
-        Trip.mockDetail(for: trip.id)
+        Trip.mockDetail(forYear: trip.year)
     }
 
     private var scheduleEvents: [TripEvent] {

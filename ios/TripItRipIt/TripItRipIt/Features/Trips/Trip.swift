@@ -157,20 +157,24 @@ extension Trip {
 
     static let mockTrips: [Trip] = mockDetails.map(\.trip)
 
-    static func mockCourseNames(for tripId: UUID) -> [String] {
-        mockDetails.first(where: { $0.trip.id == tripId })?.courseNames ?? []
+    // Curated per-year content (courses, attendees, lodging, hero) is keyed by
+    // `year`, not the trip's id: trips load from Supabase with real row UUIDs,
+    // while this mock content uses freshly generated UUIDs that never match.
+    // Year is stable across both, so it's the reliable join key.
+    static func mockCourseNames(forYear year: Int) -> [String] {
+        mockDetail(forYear: year)?.courseNames ?? []
     }
 
-    static func mockFeaturedCourse(for tripId: UUID) -> String? {
-        mockDetails.first(where: { $0.trip.id == tripId })?.featuredCourseName
+    static func mockFeaturedCourse(forYear year: Int) -> String? {
+        mockDetail(forYear: year)?.featuredCourseName
     }
 
-    static func mockDetail(for tripId: UUID) -> MockTripDetail? {
-        mockDetails.first(where: { $0.trip.id == tripId })
+    static func mockDetail(forYear year: Int) -> MockTripDetail? {
+        mockDetails.first(where: { $0.trip.year == year })
     }
 
-    static func mockAttendees(for tripId: UUID) -> [Member] {
-        let nicknames = mockDetail(for: tripId)?.attendeeNicknames ?? []
+    static func mockAttendees(forYear year: Int) -> [Member] {
+        let nicknames = mockDetail(forYear: year)?.attendeeNicknames ?? []
         return nicknames.compactMap { nick in
             Member.allMockMembers.first(where: { $0.nickname == nick })
         }
@@ -179,8 +183,8 @@ extension Trip {
     /// Resolves the Course whose photo should be used as the year-card hero.
     /// Prefers the featured course if it has a photo, otherwise the first course
     /// played that year that has any photo (bundled asset or remote URL).
-    static func mockHeroCourse(for tripId: UUID) -> Course? {
-        guard let detail = mockDetail(for: tripId) else { return nil }
+    static func mockHeroCourse(forYear year: Int) -> Course? {
+        guard let detail = mockDetail(forYear: year) else { return nil }
         if let featured = Course.find(byName: detail.featuredCourseName), featured.hasAnyPhoto {
             return featured
         }
