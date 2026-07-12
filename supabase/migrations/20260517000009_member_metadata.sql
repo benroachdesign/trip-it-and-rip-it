@@ -2,9 +2,9 @@
 -- handicap can be null; home_city populated from 2023 trip planning docs.
 -- fun_fact + bio remain null until Ben supplies them.
 
-alter table members add column home_city text;
-alter table members add column fun_fact text;
-alter table members add column bio text;
+alter table members add column if not exists home_city text;
+alter table members add column if not exists fun_fact text;
+alter table members add column if not exists bio text;
 
 update members set home_city = 'Chicago'       where nickname = 'Roach';
 update members set home_city = 'Portland'      where nickname = 'Strub';
