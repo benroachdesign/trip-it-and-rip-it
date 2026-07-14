@@ -57,30 +57,11 @@ final class AuthViewModel {
         state = .signedOut
     }
 
+    // Access is gated by TestFlight (only invited installs get the app), so any
+    // successful Apple sign-in is allowed straight through. This previously
+    // checked an `allowed_emails` table; that redundant second gate was removed.
     private func apply(session: Session) async {
-        let email = session.user.email ?? ""
-        do {
-            let rows: [AllowedEmail] = try await client
-                .from("allowed_emails")
-                .select("email")
-                .eq("email", value: email)
-                .execute()
-                .value
-            if rows.isEmpty {
-                state = .notAllowed(email: email)
-                try? await client.auth.signOut()
-            } else {
-                state = .signedIn(user: session.user)
-                lastError = nil
-            }
-        } catch {
-            state = .notAllowed(email: email)
-            lastError = "Could not verify allowlist: \(error.localizedDescription)"
-            try? await client.auth.signOut()
-        }
+        state = .signedIn(user: session.user)
+        lastError = nil
     }
-}
-
-private struct AllowedEmail: Decodable {
-    let email: String
 }
