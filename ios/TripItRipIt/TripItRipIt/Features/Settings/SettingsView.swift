@@ -33,7 +33,6 @@ struct SettingsView: View {
                 } header: {
                     settingsMasthead
                         .textCase(nil)
-                        .padding(.horizontal, -16)
                         .padding(.top, 0)
                 }
                 .listRowInsets(EdgeInsets())

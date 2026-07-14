@@ -121,11 +121,13 @@ struct HomeView: View {
                     showSettings = true
                 } label: {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.homeInk)
+                        .font(.system(size: 17, weight: .regular))
+                        .foregroundStyle(Color.homeInk.opacity(0.65))
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel("Settings")
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
@@ -378,19 +380,20 @@ private struct FirstUpCard: View {
 
     var body: some View {
         let events = MockTripEvents.events(forYear: trip.year).prefix(3)
-        VStack(alignment: .leading, spacing: Spacing.md) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("FIRST UP")
                 .font(AppFont.body(11, weight: .semibold))
                 .tracking(2)
                 .foregroundStyle(Color.homeMuted)
                 .padding(.horizontal, Spacing.md)
                 .padding(.top, Spacing.md)
+                .padding(.bottom, Spacing.md)
             VStack(spacing: 1) {
                 ForEach(Array(events), id: \.id) { event in
                     HomeEventRow(event: event)
                 }
             }
-            .padding(.bottom, Spacing.xs)
+            viewFullScheduleLink
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.homeSurface)
@@ -399,6 +402,34 @@ private struct FirstUpCard: View {
             RoundedRectangle(cornerRadius: Radius.lg)
                 .stroke(Color.homeDivider, lineWidth: 1)
         )
+    }
+
+    // Footer link into the full trip page (which carries the complete schedule).
+    private var viewFullScheduleLink: some View {
+        NavigationLink(value: trip) {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color.homeDivider)
+                    .frame(height: 1)
+                HStack(spacing: 6) {
+                    Text("VIEW FULL SCHEDULE")
+                        .font(AppFont.body(11, weight: .semibold))
+                        .tracking(1.5)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .accessibilityHidden(true)
+                }
+                .foregroundStyle(Color.homeAccent)
+                .padding(.horizontal, Spacing.md)
+                .padding(.vertical, Spacing.md - 2)
+                .contentShape(Rectangle())
+            }
+        }
+        .buttonStyle(.plain)
+        .hapticOnTap(.soft)
+        .accessibilityLabel("View full schedule")
+        .accessibilityHint("Opens the 2026 Bandon trip page")
     }
 }
 
