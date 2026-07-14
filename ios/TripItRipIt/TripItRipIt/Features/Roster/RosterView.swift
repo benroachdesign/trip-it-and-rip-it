@@ -156,14 +156,14 @@ extension Member {
 
 extension Member {
     static let allMockMembers: [Member] = [
-        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 11.6, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true,  homeCity: "Madison",       handicap: 15.0, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Ben Roach",       nickname: "Roach",  sortOrder: 10,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 12.7, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Ryan Strub",      nickname: "Strub",  sortOrder: 20,  isGuest: false, isOg: true,  homeCity: "Madison",       handicap: 15.1, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Austin Mader",    nickname: "Mader",  sortOrder: 30,  isGuest: false, isOg: true,  homeCity: "Dallas",        handicap: 17.0, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 12.0, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        handicap: 9.2,  funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       handicap: 14.8, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", handicap: 11.3, funFact: nil, bio: nil),
-        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Minneapolis",   handicap: 12.6, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Braden Carlson",  nickname: "Braden", sortOrder: 40,  isGuest: false, isOg: true,  homeCity: "Chicago",       handicap: 12.4, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Matt Webb",       nickname: "Webb",   sortOrder: 50,  isGuest: false, isOg: false, homeCity: "Austin",        handicap: 10.5, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Tommer Butman",   nickname: "Tommer", sortOrder: 60,  isGuest: false, isOg: false, homeCity: "Chicago",       handicap: 14.1, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Chris Lutz",      nickname: "Lutz",   sortOrder: 70,  isGuest: false, isOg: false, homeCity: "San Francisco", handicap: 11.5, funFact: nil, bio: nil),
+        Member(id: UUID(), fullName: "Derek DeCarolis", nickname: "Derek",  sortOrder: 80,  isGuest: false, isOg: false, homeCity: "Minneapolis",   handicap: 13.9, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Alex Blizniak",   nickname: "Bliz",   sortOrder: 90,  isGuest: true,  isOg: false, homeCity: "Chicago",  handicap: 11, funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Kyle Worley",     nickname: "Kyle",   sortOrder: 100, isGuest: true,  isOg: false, homeCity: "Portland", handicap: 4,  funFact: nil, bio: nil),
         Member(id: UUID(), fullName: "Mike Steward",    nickname: "Mike",   sortOrder: 110, isGuest: true,  isOg: false, homeCity: "Austin",   handicap: 7,  funFact: nil, bio: nil)
